@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     width: 400, // Adjust width and height as needed
     height: 400,
     position: 'absolute',
-    top: 220, 
+    top: 200, 
   },
   Asim_logo:{
     width: 200, // Adjust width and height as needed

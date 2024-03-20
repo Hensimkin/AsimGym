@@ -12,14 +12,14 @@ const QuarterCircle = () => {
 
 const styles = StyleSheet.create({
   quarterCircle: {
-    height: 450,
+    height: 420,
     backgroundColor: '#00BFFF',
     overflow: 'hidden',
     borderBottomRightRadius: 0,
     borderBottomLeftRadius: 400,
     borderTopRightRadius: 0,
     position: 'absolute',
-    top: 0,
+    bottom: 490,
   },
 });
 
