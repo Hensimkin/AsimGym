@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image ,TouchableHi
 import QuarterCircleOp from '../shapes/QuarterCircleOp';
 import Arrow from 'react-native-arrow';
 import Icon from 'react-native-vector-icons/FontAwesome'; // Import the eye icon
+import axios from 'axios';
 
 const RegistrationPage = ({ navigation }) => {
   const [username, setUsername] = useState('');
@@ -11,12 +12,21 @@ const RegistrationPage = ({ navigation }) => {
   const [hidePassword, setHidePassword] = useState(true);
   const [buttonPressed, setButtonPressed] = useState(false);
 
-  const handleRegister = () => {
-    console.log('Registering...');
-    console.log('Username:', username);
-    console.log('Email:', email);
-    console.log('Password:', password);
+  const handleRegister = async () => {
+    try {
+      const response = await axios.post('http://10.0.2.2:8000/api/user/create', {
+        name: username,
+        email: email,
+        password: password,
+      });
+      console.log('User registration response:', response.data);
+      // Assuming you want to navigate to another screen upon successful registration
+      navigation.navigate('HomePage');
+    } catch (error) {
+      console.error('Error registering user:', error);
+    }
   };
+
 
   const togglePasswordVisibility = () => {
     setHidePassword(!hidePassword);
