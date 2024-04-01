@@ -4,7 +4,7 @@ import { View, StyleSheet} from 'react-native';
 const MainPage = ({ navigation }) => {
     return (
         <View style={styles.container}>
-            {/* Your component content goes here */}
+            {/* Your componfdent content goes here */}
         </View>
     );
 }
