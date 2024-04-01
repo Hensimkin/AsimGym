@@ -5,6 +5,7 @@ import React from 'react';
 import HomePage from './pages/HomePage';
 import RegistrationPage from './pages/RegistrationPage';
 import LoginPage from './pages/LoginPage';
+import MainPage from './pages/MainPage';
 
 
 const Stack = createStackNavigator();
@@ -16,6 +17,7 @@ const App = () => {
       <Stack.Screen name="HomePage" component={HomePage} options={{ headerShown: false }} />
       <Stack.Screen name="RegistrationPage" component={RegistrationPage} options={{ headerShown: false }} />
       <Stack.Screen name="LoginPage" component={LoginPage} options={{ headerShown: false }} />
+      <Stack.Screen name="MainPage" component={MainPage} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

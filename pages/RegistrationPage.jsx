@@ -21,7 +21,7 @@ const RegistrationPage = ({ navigation }) => {
       });
       console.log('User registration response:', response.data);
       // Assuming you want to navigate to another screen upon successful registration
-      navigation.navigate('HomePage');
+      navigation.navigate('MainPage');
     } catch (error) {
       console.error('Error registering user:', error);
     }

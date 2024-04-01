@@ -1,10 +1,87 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View ,Button,Image} from 'react-native';
+import { StyleSheet, Text, View ,Button,Image } from 'react-native';
 import QuarterCircle from '../shapes/QuarterCircle';
 import CustomButton from '../components/CustomButton'
+import React, { useState,useEffect} from 'react';
+import axios from 'axios';
+import * as WebBrowser from "expo-web-browser";
+import * as Google from "expo-auth-session/providers/google";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+
+//955645307335-irmnb2pjm0j6tehi938if1p7vkn28nn4.apps.googleusercontent.com
+
+WebBrowser.maybeCompleteAuthSession();
 
 export default function App({ navigation }) {
+  
+  const [userInfo, setUserInfo] = React.useState(null);
+  const [request, response, promptAsync] = Google.useAuthRequest({
+    androidClientId:'955645307335-irmnb2pjm0j6tehi938if1p7vkn28nn4.apps.googleusercontent.com'
+    });
+
+  // React.useEffect (() => {
+  //   handleSignIn();
+  //     }, [response]); 
+
+  // async function handleSignIn(){
+  //   const user = await AsyncStorage.getItem("@user");
+  //     if (!user) {
+  //       if (response?.type == "success") {
+  //         await getUserInfo (response.authentication.accessToken);
+  //       }
+  //     } 
+  //     else {
+  //       setUserInfo(JSON.parse(user));
+  //     }
+  // }  
+
+
+  // const getUserInfo = async (token) => {
+  //   try {
+  //     const response = await fetch(
+  //     "https://www.googleapis.com/userinfo/v2/me",
+  //     {
+  //     headers: { Authorization: `Bearer ${token}` },
+  //     }
+  //     );
+  //     const user = await response.json();
+  //     await AsyncStorage.setItem("@user", JSON.stringify(user));
+  //     setUserInfo(user);
+  //   } 
+  // catch (error) {
+  //   // Add your own error handler here
+  //     }
+  // };
+
+    const YOUR_CLIENT_ID = "955645307335-dq3jk2dpiuu1jvemhn31tgjm87uhmfc5.apps.googleusercontent.com"
+    const YOUR_REDIRECT_URI = "https://8c44-2a10-8012-5-aa62-c4c2-85a0-b50c-2b08.ngrok-free.app/LoginPage"
+ 
+  const handlePress = async () => {
+
+   const result = await WebBrowser.openAuthSessionAsync(
+        `https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=${YOUR_CLIENT_ID}&redirect_uri=${YOUR_REDIRECT_URI}&scope=https://www.googleapis.com/auth/userinfo.email%20https://www.googleapis.com/auth/userinfo.profile&access_type=offline&state=1234_purpleGoogle&prompt=consent`,
+        YOUR_REDIRECT_URI
+      );   
+      if (result.type === "success") {
+        console.log("suc")
+        // get back the params from the url
+        const params = Linking.parse(result.url);
+
+        const { email, name } = params.queryParams;
+
+        //pass in all the user data in an object...
+        const user = {
+          email,
+          name,
+        };
+      }
+      console.log("fail")
+        // navigate to the HomeScreen and pass the user object 
+   };
+
   return (
+    
     <View style={styles.container}>
       <QuarterCircle style={styles.quarterCircle}/>
       <Image
@@ -16,12 +93,13 @@ export default function App({ navigation }) {
         style={styles.Asim_logo}
       />
      <View style={styles.buttonRow}>
-        <CustomButton
+        {/* <CustomButton
           title="Continue with Google"
           icon={require('../pictures/google.png')}
           onPress2="google"
+          onPress={promptAsync}
           navigation={navigation}
-        />
+        /> */}
         <CustomButton
           title="Continue with Email"
           icon={require('../pictures/email.png')}
@@ -33,6 +111,24 @@ export default function App({ navigation }) {
           onPress2="LoginPage"
           navigation={navigation}
         />
+        {/* <Button title="Sign in with Google" style={styles.gobot} onPress={async () => {
+          try {
+            await promptAsync();
+          } catch (err) {
+            console.error('Authentication error:', err);
+          }
+        }} /> */}
+
+        {/* <Button title="Sign in with Google" style={styles.gobot} onPress={async () => {
+          try {
+            await promptAsync();
+          } catch (err) {
+            console.error('Authentication error:', err);
+          }
+        }} /> */}
+
+        {/* <Button title="g"  onPress={handlePress}/> */}
+
       </View>
       <StatusBar style="auto" />
     </View>
