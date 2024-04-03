@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image ,TouchableHighlight} from 'react-native';
 import QuarterCircleOp from '../shapes/QuarterCircleOp';
 import Arrow from 'react-native-arrow';
@@ -65,13 +66,12 @@ const RegistrationPage = ({ navigation }) => {
         });
         console.log('User registration response:', response.data);
         if (response.data.message === 'User already exists') {
-          // Handle the case where the user already exists
-          // For example, you can display an alert to the user
           setErrorMessage('User already exists. Please try a different email.');
-          //alert('User already exists. Please try a different email.');
         } else {
-          // Assuming you want to navigate to another screen upon successful registration
-          navigation.navigate('MainPage');
+          navigation.navigate('VerificationPage');
+          await AsyncStorage.setItem('accessToken', response.data.token);
+          await AsyncStorage.setItem('user', response.data.user);
+          await AsyncStorage.setItem('semitoken', response.data.semitoken);
         }
       } catch (error) {
         console.error('Error registering user:', error);
