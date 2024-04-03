@@ -11,20 +11,72 @@ const RegistrationPage = ({ navigation }) => {
   const [password, setPassword] = useState('');
   const [hidePassword, setHidePassword] = useState(true);
   const [buttonPressed, setButtonPressed] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage2, setErrorMessage2] = useState('');
 
   const handleRegister = async () => {
-    try {
-      const response = await axios.post('http://10.0.2.2:8000/api/user/create', {
-        name: username,
-        email: email,
-        password: password,
-      });
-      console.log('User registration response:', response.data);
-      // Assuming you want to navigate to another screen upon successful registration
-      navigation.navigate('MainPage');
-    } catch (error) {
-      console.error('Error registering user:', error);
-    }
+
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const passwordPattern = /^[a-zA-Z]{8,}$/;
+    console.log(email);
+
+  // Check if email matches the pattern
+    // if (!emailPattern.test(email)||!passwordPattern.test(password)) {
+    //   if(!emailPattern.test(email)&&passwordPattern.test(password))
+    //   {
+    //     setErrorMessage('');
+    //     setErrorMessage2('');
+    //     setErrorMessage('Invalid email format. Please enter a valid email address.');
+    //     setErrorMessage2('Password must be at least 8 characters long and contain only English letters.');
+    //     console.log('1');
+
+    //   }
+    //   else if(passwordPattern.test(password))
+    //   {
+    //     setErrorMessage('');
+    //     setErrorMessage2('');
+    //     setErrorMessage2('Password must be at least 8 characters long and contain only English letters.');
+    //     console.log('2');
+    //   }
+    //   else{
+    //     setErrorMessage('');
+    //     setErrorMessage2('');
+    //     setErrorMessage('Invalid email format. Please enter a valid email address.');
+    //     console.log('3');
+    //   }
+    // }
+    // else if (!passwordPattern.test(password)) {
+    //   setErrorMessage2('Password must be at least 8 characters long and contain only English letters.');
+    //   return
+    // } 
+
+    // else if (!emailPattern.test(email)&&!passwordPattern.test(password)) {
+    //   setErrorMessage('Invalid email format. Please enter a valid email address.');
+    //   setErrorMessage2('Password must be at least 8 characters long and contain only English letters.');
+    //   return
+    // }
+
+    // else{
+      try {
+        const response = await axios.post('http://10.0.2.2:8000/api/user/create', {
+          name: username,
+          email: email,
+          password: password,
+        });
+        console.log('User registration response:', response.data);
+        if (response.data.message === 'User already exists') {
+          // Handle the case where the user already exists
+          // For example, you can display an alert to the user
+          setErrorMessage('User already exists. Please try a different email.');
+          //alert('User already exists. Please try a different email.');
+        } else {
+          // Assuming you want to navigate to another screen upon successful registration
+          navigation.navigate('MainPage');
+        }
+      } catch (error) {
+        console.error('Error registering user:', error);
+      }
+    // }
   };
 
 
@@ -55,6 +107,8 @@ const RegistrationPage = ({ navigation }) => {
         style={styles.image}
       />
       <Text style={styles.title}>Sign Up</Text>
+      {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
+      {errorMessage2 ? <Text style={styles.errorText2}>{errorMessage2}</Text> : null}
       <TextInput
         style={[styles.input, { top: 270 }]}
         placeholder="Email"
@@ -62,7 +116,7 @@ const RegistrationPage = ({ navigation }) => {
         value={email}
         onChangeText={text => setEmail(text)}
       />
-
+      
       <TextInput
         style={[styles.input, { top: 320 }]}
         placeholder="Username"
@@ -78,6 +132,7 @@ const RegistrationPage = ({ navigation }) => {
           onChangeText={text => setPassword(text)}
           style={{ flex: 1 }}
         />
+
         <TouchableOpacity onPress={togglePasswordVisibility} style={styles.passwordVisibilityButton}>
           <Icon name={hidePassword ? 'eye-slash' : 'eye'} size={20} color="#000" />
         </TouchableOpacity>
@@ -106,6 +161,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#fff',
+  },
+  errorText:{
+    color:'red',
+    marginBottom: 20,
+    position: 'absolute',
+    top: 230,
+    fontWeight: 'bold',
+  },
+  errorText2:{
+    color:'red',
+    marginBottom: 20,
+    position: 'absolute',
+    top: 250,
+    fontWeight: 'bold',
   },
   title: {
     fontSize: 50,

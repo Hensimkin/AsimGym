@@ -2,6 +2,7 @@
   "expo": {
     "name": "AsimGym",
     "slug": "AsimGym",
+    "scheme": "com.anonymous.AsimGym",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -22,8 +23,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.anonymous.AsimGym",
-      "scheme": "AsimGym"
+      "package": "com.anonymous.AsimGym"
     },
     "web": {
       "favicon": "./assets/favicon.png"

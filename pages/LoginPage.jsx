@@ -3,6 +3,7 @@ import { View, Text, TextInput,TouchableHighlight, TouchableOpacity, StyleSheet,
 import QuarterCircle from '../shapes/QuarterCircle';
 import Icon from 'react-native-vector-icons/FontAwesome'; // Import the eye icon
 import Arrow from 'react-native-arrow';
+import axios from 'axios';
 
 const LoginScreen = ({navigation}) => {
   const [email, setEmail] = useState('');
@@ -10,10 +11,18 @@ const LoginScreen = ({navigation}) => {
   const [hidePassword, setHidePassword] = useState(true);
   const [buttonPressed, setButtonPressed] = useState(false);
 
-  const handleLogin = () => {
-    // Perform login logic here
-    console.log('Email:', email);
-    console.log('Password:', password);
+  const handleLogin = async () => {
+    try {
+      const response = await axios.post('http://10.0.2.2:8000/api/user/login', {
+        email: email,
+        password: password,
+      });
+      console.log('User login response:', response.data);
+      // Assuming you want to navigate to another screen upon successful registration
+      navigation.navigate('VerificationPage');
+    } catch (error) {
+      console.error('Error login user:', error);
+    }
   };
 
   const togglePasswordVisibility = () => {
@@ -53,7 +62,7 @@ const LoginScreen = ({navigation}) => {
               placeholder="Email"
               keyboardType="email-address"
               value={email}
-             // onChangeText={text => setEmail(text)}
+              onChangeText={text => setEmail(text)}
             />
 
             <TouchableOpacity style={styles.loginLink} onPress={goToReg}>

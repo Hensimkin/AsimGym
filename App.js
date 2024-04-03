@@ -6,6 +6,7 @@ import HomePage from './pages/HomePage';
 import RegistrationPage from './pages/RegistrationPage';
 import LoginPage from './pages/LoginPage';
 import MainPage from './pages/MainPage';
+import VerificationPage from './pages/VerificationPage'
 
 
 const Stack = createStackNavigator();
@@ -18,6 +19,7 @@ const App = () => {
       <Stack.Screen name="RegistrationPage" component={RegistrationPage} options={{ headerShown: false }} />
       <Stack.Screen name="LoginPage" component={LoginPage} options={{ headerShown: false }} />
       <Stack.Screen name="MainPage" component={MainPage} options={{ headerShown: false }} />
+      <Stack.Screen name="VerificationPage" component={VerificationPage} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
