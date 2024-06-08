@@ -4,8 +4,11 @@ import QuarterCircle from '../shapes/QuarterCircle';
 import Icon from 'react-native-vector-icons/FontAwesome'; // Import the eye icon
 import Arrow from 'react-native-arrow';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useNavigation} from '@react-navigation/native';
 
-const LoginScreen = ({navigation}) => {
+const LoginScreen = () => {
+  const navigation = useNavigation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [hidePassword, setHidePassword] = useState(true);
@@ -13,13 +16,32 @@ const LoginScreen = ({navigation}) => {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post('http://10.0.2.2:8000/api/user/login', {
+      const response = await axios.post('http://10.0.2.2:8000/api/user/login', { // need to add the check if the user verified 
         email: email,
         password: password,
       });
+      await AsyncStorage.setItem('userEmail', email,);
       console.log('User login response:', response.data);
+      console.log(email)
       // Assuming you want to navigate to another screen upon successful registration
-      navigation.navigate('VerificationPage');
+
+
+      // const accessToken=await axios.get('http://10.0.2.2:8000/api/user/getToken',{
+      //   email: email,
+      // });
+
+      const accessToken = await axios.get(`http://10.0.2.2:8000/api/user/getToken?email=${encodeURIComponent(email)}`);
+      console.log(accessToken.data.accesstoken);
+      await AsyncStorage.setItem('accessToken', accessToken.data.accesstoken);
+      console.log("email2",email);
+      const checkVerifiedUser = await axios.post('http://10.0.2.2:8000/api/user/checkverify', {
+              email: email,
+            });
+      if (checkVerifiedUser.data.msg === "true") {
+        navigation.navigate('MainPage');
+      } else {
+        navigation.navigate('VerificationPage');
+      }      
     } catch (error) {
       console.error('Error login user:', error);
     }

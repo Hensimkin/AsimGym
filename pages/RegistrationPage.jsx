@@ -5,8 +5,10 @@ import QuarterCircleOp from '../shapes/QuarterCircleOp';
 import Arrow from 'react-native-arrow';
 import Icon from 'react-native-vector-icons/FontAwesome'; // Import the eye icon
 import axios from 'axios';
+import {useNavigation} from '@react-navigation/native';
 
-const RegistrationPage = ({ navigation }) => {
+const RegistrationPage = () => {
+  const navigation = useNavigation();
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -67,11 +69,13 @@ const RegistrationPage = ({ navigation }) => {
         console.log('User registration response:', response.data);
         if (response.data.message === 'User already exists') {
           setErrorMessage('User already exists. Please try a different email.');
-        } else {
+        } 
+        else {
           navigation.navigate('VerificationPage');
-          await AsyncStorage.setItem('accessToken', response.data.token);
-          await AsyncStorage.setItem('user', response.data.user);
-          await AsyncStorage.setItem('semitoken', response.data.semitoken);
+          await AsyncStorage.setItem('accessToken', response.data.token); // users token for session
+          await AsyncStorage.setItem('username', response.data.username); //users name
+          await AsyncStorage.setItem('semitoken', response.data.semitoken); // for user verification
+          await AsyncStorage.setItem('useremail', response.data.useremail); //users email
         }
       } catch (error) {
         console.error('Error registering user:', error);
