@@ -97,7 +97,7 @@ const ExcersicePage = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                console.log("err1");
+                console.log("getting all excersices");
                 const response = await axios.get('http://10.0.2.2:8000/api/user/getExercises'); 
                 const exercises = response.data.exercises;
                 setData(exercises);
@@ -128,8 +128,7 @@ const ExcersicePage = () => {
         <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <ScrollView contentContainerStyle={styles.scrollViewContent}>
-                    <Text style={styles.title}>Exercise Page</Text>
-                    {/* {data && data.map((exercise, index) => (
+                    {/* {data && data.map((exercise, index) => ( //all of them
                         <Card
                             key={index}
                             title={exercise.name}
