@@ -34,6 +34,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import MainPage from '../pages/MainPage';
 import ProfilePage from '../pages/ProfilePage';
 import ExcersicePage from '../pages/ExcersicePage';
+import EquipmentPage from '../pages/EquipmentPage';
 
 const Drawer = createDrawerNavigator();
 
@@ -44,6 +45,7 @@ const DrawerNavigator = () => {
         <Drawer.Screen name="MainPage" component={MainPage} />
         <Drawer.Screen name="ProfilePage" component={ProfilePage} />
         <Drawer.Screen name="ExcersicePage" component={ExcersicePage} />
+        <Drawer.Screen name="EquipmentPage" component={EquipmentPage} />
       </Drawer.Navigator>
 
   );
