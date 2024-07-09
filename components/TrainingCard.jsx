@@ -7,7 +7,7 @@ const Card = ({ title, description, image }) => {
       <Image source={{ uri: image }} style={styles.image} />
       <View style={styles.content}>
         <Text style={styles.title}>{title}</Text>
-        <Text style={styles.description}>{description}</Text>
+        <Text style={styles.description}>Target: {description}</Text>
       </View>
     </View>
   );
@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
     width: 80, // Set the width to 80
     height: 80, // Set the height to 80
     borderRadius: 10,
-    marginRight: 30, // Add margin to the left for spacing
+    marginRight: 20, // Add margin to the left for spacing
   },
   content: {
     flex: 1, // Allow the content to take up the remaining space
@@ -47,6 +47,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#777',
     marginTop: 5,
+    marginLeft: 10,
   },
 });
 
