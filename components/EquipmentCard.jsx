@@ -4,7 +4,7 @@ import { View, Text, Image, StyleSheet } from 'react-native';
 const EquipmentCard = ({ title, description, image }) => {
   return (
     <View style={styles.card}>
-      <Image source={{ uri: image }} style={styles.image} />
+      <Image source={image} style={styles.image} />
       <View style={styles.content}>
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.description}>{description}</Text>

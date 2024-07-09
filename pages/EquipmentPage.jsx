@@ -105,7 +105,7 @@ const EquipmentPage = () => {
                                     <View style={styles.textContainer}>
                                         <Text style={styles.modalText}>Description: {selectedEquipment.description}</Text>
                                     </View>
-                                    <Image source={{ uri: selectedEquipment.image }} style={styles.exerciseImage} />
+                                    <Image source={selectedEquipment.image } style={styles.exerciseImage} />
                                     <TouchableOpacity onPress={closeDetailsModal} style={styles.closeButton}>
                                         <Text style={styles.closeButtonText}>Close</Text>
                                     </TouchableOpacity>
