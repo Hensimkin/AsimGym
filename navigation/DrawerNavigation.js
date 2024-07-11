@@ -35,6 +35,7 @@ import MainPage from '../pages/MainPage';
 import ProfilePage from '../pages/ProfilePage';
 import ExcersicePage from '../pages/ExcersicePage';
 import EquipmentPage from '../pages/EquipmentPage';
+import WelcomePage from '../pages/FirstSettingsPage';
 
 const Drawer = createDrawerNavigator();
 
@@ -42,10 +43,11 @@ const DrawerNavigator = () => {
   return (
 
       <Drawer.Navigator initialRouteName="MainPage" >
-        <Drawer.Screen name="MainPage" component={MainPage} />
-        <Drawer.Screen name="ProfilePage" component={ProfilePage} />
-        <Drawer.Screen name="ExcersicePage" component={ExcersicePage} />
-        <Drawer.Screen name="EquipmentPage" component={EquipmentPage} />
+        <Drawer.Screen name="Main Page" component={MainPage} />
+        <Drawer.Screen name="Profile Page" component={ProfilePage} />
+        <Drawer.Screen name="Excersice Page" component={ExcersicePage} />
+        <Drawer.Screen name="Equipment Page" component={EquipmentPage} />
+        <Drawer.Screen name="Welcome" component={WelcomePage} />
       </Drawer.Navigator>
 
   );
