@@ -71,11 +71,12 @@ const RegistrationPage = () => {
           setErrorMessage('User already exists. Please try a different email.');
         } 
         else {
-          navigation.navigate('VerificationPage');
           await AsyncStorage.setItem('accessToken', response.data.token); // users token for session
           await AsyncStorage.setItem('username', response.data.username); //users name
           await AsyncStorage.setItem('semitoken', response.data.semitoken); // for user verification
           await AsyncStorage.setItem('useremail', response.data.useremail); //users email
+          navigation.navigate('VerificationPage');
+          
         }
       } catch (error) {
         console.error('Error registering user:', error);

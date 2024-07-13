@@ -9,6 +9,7 @@ import LoginPage from '../pages/LoginPage';
 import VerificationPage from '../pages/VerificationPage'
 import NavDrawer from '../navigation/DrawerNavigation'
 import ProfilePage from '../pages/ProfilePage'
+import FirstSettingsPage from '../pages/FirstSettingsPage'
 
 
 const Stack = createStackNavigator();
@@ -23,6 +24,7 @@ const AppNavigation = () => {
         <Stack.Screen name="MainPage" component={NavDrawer} options={{ headerShown: false }} />
         <Stack.Screen name="VerificationPage" component={VerificationPage} options={{ headerShown: false }} />
         <Stack.Screen name="ProfilePage" component={ProfilePage} options={{ headerShown: false }} />
+        <Stack.Screen name="FirstSettingsPage" component={FirstSettingsPage} options={{ headerShown: false }} />
       </Stack.Navigator>
     );
   };

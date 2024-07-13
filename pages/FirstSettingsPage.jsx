@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, ScrollView, Switch, Image, TouchableOpacity, StyleSheet, Button } from 'react-native';
+import { View, Text, TextInput, ScrollView, Switch, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import muscleImages from '../data/muscleImages'; // Import the images
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import {useNavigation} from '@react-navigation/native';
+
 
 const FitnessDetails = () => {
+  const navigation = useNavigation();
   const [height, setHeight] = useState('160');
   const [weight, setWeight] = useState('70');
-  const [gender, setGender] = useState('man');
+  const [gender, setGender] = useState('male');
   const [age, setAge] = useState('');
   const [fitnessLevel, setFitnessLevel] = useState('Beginner');
   const [goal, setGoal] = useState('Lose Weight');
@@ -14,7 +19,7 @@ const FitnessDetails = () => {
   const [isFormValid, setIsFormValid] = useState(false);
 
   const muscleGroups = [
-    'all', 'back', 'biceps', 'cardio', 'chest', 'forearms', 'lower_legs', 'neck', 'shoulders', 'triceps','upper_legs','waist'
+    'fullbody', 'back', 'biceps', 'cardio', 'chest', 'forearms', 'lower_legs', 'neck', 'shoulders', 'triceps', 'upper_legs', 'waist'
   ];
 
   useEffect(() => {
@@ -26,20 +31,59 @@ const FitnessDetails = () => {
   }, [age, selectedMuscles, height, weight]);
 
   const toggleMuscleSelection = (muscle) => {
-    if (muscle === 'Full Body') {
-      setSelectedMuscles(muscleGroups);
+    let updatedMuscles;
+
+    if (muscle === 'fullbody') {
+      if (selectedMuscles.includes('fullbody')) {
+        updatedMuscles = [];
+      } else {
+        updatedMuscles = muscleGroups;
+      }
     } else {
       if (selectedMuscles.includes(muscle)) {
-        setSelectedMuscles(selectedMuscles.filter(item => item !== muscle));
+        updatedMuscles = selectedMuscles.filter(item => item !== muscle);
       } else {
-        setSelectedMuscles([...selectedMuscles, muscle]);
+        updatedMuscles = [...selectedMuscles, muscle];
+      }
+
+      // Remove 'fullbody' if any other muscle is deselected
+      if (updatedMuscles.length < muscleGroups.length - 1) {
+        updatedMuscles = updatedMuscles.filter(item => item !== 'fullbody');
+      }
+
+      // Remove 'fullbody' if it is present and another muscle is toggled
+      if (selectedMuscles.includes('fullbody')) {
+        updatedMuscles = updatedMuscles.filter(item => item !== 'fullbody');
+      }
+
+      // Select 'fullbody' if all muscles are selected
+      if (updatedMuscles.length === muscleGroups.length - 1) {
+        updatedMuscles = [...updatedMuscles, 'fullbody'];
       }
     }
+
+    setSelectedMuscles(updatedMuscles);
   };
 
-  const handleDone = () => {
-    // Handle the done action, such as saving data or navigating to another screen
-    console.log('Details saved:', { height, weight, gender, age, fitnessLevel, goal, selectedMuscles });
+  const handleDone = async () => {
+    const email= await AsyncStorage.getItem("useremail");
+    const details = { email, height, weight, gender, age, fitnessLevel, goal, selectedMuscles };
+    try {
+      const response = await axios.post('http://10.0.2.2:8000/api/user/userConfiguration', details);
+      const response2 = await axios.post('http://10.0.2.2:8000/api/user/verifyConfiguration', {email:email});
+      if(response.data.msg=='success' && response2.data.msg=='success')
+      {
+        navigation.navigate('MainPage')
+      }
+      // const allKeys = await AsyncStorage.getAllKeys();
+      // const allItems = await AsyncStorage.multiGet(allKeys);
+      // allItems.forEach(([key, value]) => {
+      //   console.log(`${key}: ${value}`);
+      // });
+    } catch (error) {
+      console.error('Error saving details:', error);
+    }
+    console.log(details);
   };
 
   return (
@@ -63,12 +107,14 @@ const FitnessDetails = () => {
 
         <Text style={styles.label}>Gender</Text>
         <View style={styles.switchContainer}>
-          <Text>Man</Text>
+          <Text>Male</Text>
           <Switch
-            value={gender === 'woman'}
-            onValueChange={() => setGender(gender === 'man' ? 'woman' : 'man')}
+            value={gender === 'female'}
+            onValueChange={() => setGender(gender === 'male' ? 'female' : 'male')}
+            trackColor={{ false: "#767577", true: "#767577" }}
+            thumbColor={gender === 'male' ? '#007AFF' : '#FF1493'}
           />
-          <Text>Woman</Text>
+          <Text>Female</Text>
         </View>
 
         <Text style={styles.label}>Age</Text>

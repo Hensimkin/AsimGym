@@ -27,12 +27,23 @@ export default function App() {
         const token = await AsyncStorage.getItem('accessToken');
         console.log(token)
         if (token) {
-          const email = await AsyncStorage.getItem('userEmail');
+          const email = await AsyncStorage.getItem('useremail');
+          console.log(email)
           try {
             const response = await axios.post('http://10.0.2.2:8000/api/user/checkverify', {email: email});
             console.log(response.data.msg)
-            if (response.data.msg === "true") {
-              navigation.navigate('MainPage');
+
+            const response2 = await axios.post('http://10.0.2.2:8000/api/user/checkstart', {email: email});
+
+            if (response.data.msg === "true") { //verified
+              //navigation.navigate('MainPage');
+              if(response2.data.msg=="true") // started
+              {
+                navigation.navigate('MainPage');
+              }
+              else{
+                navigation.navigate('FirstSettingsPage');
+              }
             } else {
               navigation.navigate('VerificationPage');
             }
@@ -42,7 +53,7 @@ export default function App() {
           }
         }
         else {
-          setLoading(false); // Set loading to false if token is null
+          setLoading(false); // Set loading to false if token is null //change to false
         }
       } catch (error) {
         console.error('Error checking authentication:', error);

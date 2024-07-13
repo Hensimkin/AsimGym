@@ -23,9 +23,10 @@ const VerificationPage = () => {
           console.log("hi")
           const response = await axios.post('http://10.0.2.2:8000/api/user/verify', {
             email: email});
+            console.log("msgggg",response.data.msg)
             if (response.data.msg === "true") {
               console.log("hi2")
-              navigation.navigate('MainPage');
+              navigation.navigate('FirstSettingsPage');
             } else {
               navigation.navigate('VerificationPage');
             }

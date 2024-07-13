@@ -1,7 +1,7 @@
 // muscleImages.js
 
 const muscleImages = {
-    all:require('../muscles/all.png'),
+    fullbody:require('../muscles/all.png'),
     back: require('../muscles/back.png'),
     biceps: require('../muscles/biceps.png'),
     cardio: require('../muscles/cardio.png'),

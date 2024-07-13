@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput,TouchableHighlight, TouchableOpacity, StyleSheet,Image, KeyboardAvoidingView, ScrollView, TouchableWithoutFeedback,Dimensions } from 'react-native';
+import { View, Text, TextInput, TouchableHighlight, TouchableOpacity, StyleSheet, Image, KeyboardAvoidingView, ScrollView, TouchableWithoutFeedback, Dimensions, Alert } from 'react-native';
 import QuarterCircle from '../shapes/QuarterCircle';
-import Icon from 'react-native-vector-icons/FontAwesome'; // Import the eye icon
+import Icon from 'react-native-vector-icons/FontAwesome';
 import Arrow from 'react-native-arrow';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 
 const LoginScreen = () => {
   const navigation = useNavigation();
@@ -16,34 +16,47 @@ const LoginScreen = () => {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post('http://10.0.2.2:8000/api/user/login', { // need to add the check if the user verified 
+      const response = await axios.post('http://10.0.2.2:8000/api/user/login', {
         email: email,
         password: password,
       });
-      await AsyncStorage.setItem('userEmail', email,);
+      console.log(response.data.message)
+      if (response.data.message !== "true") {
+        console.log(response.data.message)
+        Alert.alert('Login Failed', 'Incorrect email or password. Please try again.');
+        return;
+      }
+      await AsyncStorage.setItem('username', response.data.user_name);
+      await AsyncStorage.setItem('userEmail', email);
       console.log('User login response:', response.data);
-      console.log(email)
-      // Assuming you want to navigate to another screen upon successful registration
-
-
-      // const accessToken=await axios.get('http://10.0.2.2:8000/api/user/getToken',{
-      //   email: email,
-      // });
+      console.log(email);
 
       const accessToken = await axios.get(`http://10.0.2.2:8000/api/user/getToken?email=${encodeURIComponent(email)}`);
       console.log(accessToken.data.accesstoken);
       await AsyncStorage.setItem('accessToken', accessToken.data.accesstoken);
-      console.log("email2",email);
+
       const checkVerifiedUser = await axios.post('http://10.0.2.2:8000/api/user/checkverify', {
-              email: email,
-            });
+        email: email,
+      });
+      
+      const response3 = await axios.post('http://10.0.2.2:8000/api/user/checkstart', {email: email});
+
+
       if (checkVerifiedUser.data.msg === "true") {
-        navigation.navigate('MainPage');
+        //navigation.navigate('MainPage');
+        if(response3.data.msg=="true") // started
+              {
+                navigation.navigate('MainPage');
+              }
+              else{
+                navigation.navigate('FirstSettingsPage');
+              }
       } else {
         navigation.navigate('VerificationPage');
-      }      
+      }
     } catch (error) {
-      console.error('Error login user:', error);
+      console.error('Error logging in user:', error);
+      Alert.alert('Login Error', 'An error occurred during login. Please try again later.');
     }
   };
 
@@ -60,25 +73,24 @@ const LoginScreen = () => {
   };
 
   const goToReg = () => {
-    navigation.navigate('RegistrationPage'); // Assuming the screen name for the login page is 'Login'
+    navigation.navigate('RegistrationPage');
   };
 
   return (
     <KeyboardAvoidingView style={styles.container} behavior="padding" keyboardVerticalOffset={0}>
       <ScrollView contentContainerStyle={styles.scrollContainer} style={{ width: '100%' }}>
         <TouchableWithoutFeedback>
-          
           <View style={styles.insideView}>
-            <QuarterCircle style={styles.quarterCircle}/>
+            <QuarterCircle style={styles.quarterCircle} />
             <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('HomePage')}>
               <Arrow name="ios-arrow-back" size={24} color="black" />
             </TouchableOpacity>
             <Image
-              source={require('../pictures/lady_login.png')} 
+              source={require('../pictures/lady_login.png')}
               style={styles.image}
             />
             <Text style={styles.title}>Login</Text>
-            
+
             <TextInput
               style={[styles.input, { top: 500 }]}
               placeholder="Email"
@@ -88,9 +100,9 @@ const LoginScreen = () => {
             />
 
             <TouchableOpacity style={styles.loginLink} onPress={goToReg}>
-              <Text style={styles.loginText}>Haven't signed yet ?</Text>
+              <Text style={styles.loginText}>Haven't signed yet?</Text>
             </TouchableOpacity>
-                  
+
             <View style={[styles.input, { top: 550 }]}>
               <TextInput
                 placeholder="Password"
@@ -103,10 +115,10 @@ const LoginScreen = () => {
                 <Icon name={hidePassword ? 'eye-slash' : 'eye'} size={20} color="#000" />
               </TouchableOpacity>
             </View>
-            <TouchableHighlight 
-              style={[styles.button, buttonPressed && styles.buttonPressed]} 
+            <TouchableHighlight
+              style={[styles.button, buttonPressed && styles.buttonPressed]}
               onPress={handleLogin}
-              underlayColor="#0066cc" // Change background color when pressed
+              underlayColor="#0066cc"
               onPressIn={onPressIn}
               onPressOut={onPressOut}
             >
@@ -135,7 +147,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 50,
     color: '#ffffff',
-    bottom:550
+    bottom: 550,
   },
   input: {
     flexDirection: 'row',
@@ -169,7 +181,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fb5b5a',
     borderRadius: 25,
     height: 50,
-    bottom:0,
+    bottom: 0,
   },
   loginText: {
     color: 'white',
@@ -178,13 +190,12 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    //backgroundColor: 'black',
     width: '100%',
   },
-  image:{
-    bottom:110,
-    width:400,
-    height:400,
+  image: {
+    bottom: 110,
+    width: 400,
+    height: 400,
   },
   button: {
     backgroundColor: '#00BFFF',
@@ -195,11 +206,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     position: 'absolute',
     top: 630,
-    width:'40%',
+    width: '40%',
     transform: [{ scale: 1 }],
   },
   buttonPressed: {
-    transform: [{ scale: 1.05 }], // Expand the button when pressed
+    transform: [{ scale: 1.05 }],
   },
   backButton: {
     top: 60,
@@ -209,13 +220,12 @@ const styles = StyleSheet.create({
     position: 'absolute',
     transform: [{ scaleX: -1 }],
   },
-  loginText: {
-    color: '#007bff',
-    fontWeight: 'bold',
-  },
   loginLink: {
     position: 'absolute',
-    top: 600, // Adjust position as needed
+    top: 600,
+  },
+  passwordVisibilityButton: {
+    marginLeft: 10,
   },
 });
 

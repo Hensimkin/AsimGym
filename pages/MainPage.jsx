@@ -19,9 +19,10 @@ const MainPage = () => {
 
     const handleButtonPress = () => {
         // Navigate to Home page
-        navigation.navigate('ProfilePage');
+        clearAsyncStorage();
+        navigation.navigate('HomePage');
         // Clear AsyncStorage
-        // clearAsyncStorage();
+        //clearAsyncStorage();
     };
 
     return (
