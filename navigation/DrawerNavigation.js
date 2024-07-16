@@ -36,6 +36,7 @@ import ProfilePage from '../pages/ProfilePage';
 import ExcersicePage from '../pages/ExcersicePage';
 import EquipmentPage from '../pages/EquipmentPage';
 import WelcomePage from '../pages/FirstSettingsPage';
+import TrainingProgramPage from '../pages/TrainingProgramPage'
 
 const Drawer = createDrawerNavigator();
 
@@ -47,7 +48,7 @@ const DrawerNavigator = () => {
         <Drawer.Screen name="Profile Page" component={ProfilePage} />
         <Drawer.Screen name="Excersice Page" component={ExcersicePage} />
         <Drawer.Screen name="Equipment Page" component={EquipmentPage} />
-        <Drawer.Screen name="Welcome" component={WelcomePage} />
+        {/* <Drawer.Screen name="TrainingProgram" component={TrainingProgramPage} /> */}
       </Drawer.Navigator>
 
   );

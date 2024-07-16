@@ -27,7 +27,7 @@ const LoginScreen = () => {
         return;
       }
       await AsyncStorage.setItem('username', response.data.user_name);
-      await AsyncStorage.setItem('userEmail', email);
+      await AsyncStorage.setItem('useremail', email);
       console.log('User login response:', response.data);
       console.log(email);
 
@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
     bottom: 0,
   },
   loginText: {
-    color: 'white',
+    color: '#007bff',
   },
   insideView: {
     flex: 1,
