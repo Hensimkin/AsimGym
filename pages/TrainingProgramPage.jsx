@@ -17,14 +17,20 @@ const SelectExercisePage = () => {
     const [selectedExercises, setSelectedExercises] = useState([]);
     const [name, setName] = useState('');
     const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+    const [nameError, setNameError] = useState(''); // New state for name error message
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                console.log("getting all exercises");
-                const response = await axios.get('http://10.0.2.2:8000/api/user/getExercises');
-                const exercises = response.data.exercises;
-                setData(exercises);
+                if(data===null)
+                {
+                    console.log("getting all exercises");
+                    // const response = await axios.get('http://10.0.2.2:8000/api/user/getExercises');
+                    // const exercises = response.data.exercises;
+                    const response=await AsyncStorage.getItem("listofex")
+                    const exercises=JSON.parse(response)
+                    setData(exercises);
+                }
             } catch (error) {
                 console.log("err2");
                 setError(error);
@@ -78,9 +84,14 @@ const SelectExercisePage = () => {
             };
             console.log(payload);
             const response = await axios.post('http://10.0.2.2:8000/api/user/saveExercises', payload);
-            console.log('Response:', response.data);
-
-            navigation.navigate('UserRehearsalsPage');
+            if(response.data.message === 'ChangeName')
+            {
+                setNameError('Name already exists');
+            } else {
+                setNameError('');
+                console.log('Response:', response.data);
+                navigation.navigate('UserRehearsalsPage');
+            }
         } catch (error) {
             console.log('Error:', error);
             // Handle error appropriately
@@ -109,6 +120,7 @@ const SelectExercisePage = () => {
                         value={name}
                         onChangeText={setName}
                     />
+                    {nameError ? <Text style={styles.errorText}>{nameError}</Text> : null}
                     <View style={styles.searchFilterContainer}>
                         <TextInput
                             style={styles.searchBar}
@@ -205,7 +217,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 5,
         paddingLeft: 10,
-        marginBottom: 20,
+        marginBottom: 5,
     },
     searchBar: {
         flex: 1,
@@ -278,6 +290,11 @@ const styles = StyleSheet.create({
     doneButtonText: {
         color: '#fff',
         fontSize: 18,
+    },
+    errorText: {
+        color: 'red',
+        fontSize: 14,
+        marginBottom: 10,
     },
 });
 

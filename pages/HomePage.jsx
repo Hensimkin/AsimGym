@@ -8,12 +8,13 @@ import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {useNavigation} from '@react-navigation/native';
-
+import moment from 'moment-timezone';
 //955645307335-irmnb2pjm0j6tehi938if1p7vkn28nn4.apps.googleusercontent.com
 
 WebBrowser.maybeCompleteAuthSession();
 
 export default function App() {
+  const [isNoonCentral, setIsNoonCentral] = useState(false);
   const navigation = useNavigation();
   const [userInfo, setUserInfo] = React.useState(null);
   const [request, response, promptAsync] = Google.useAuthRequest({
@@ -24,6 +25,11 @@ export default function App() {
   useEffect(() => {
     const checkAuthentication = async () => {
       try {
+        const exresponse = await axios.get('http://10.0.2.2:8000/api/user/getExercises'); 
+        const exercises = exresponse.data.exercises;
+        await AsyncStorage.setItem("listofex",JSON.stringify(exercises));
+        // // const g=await AsyncStorage.getItem("listofex");
+        // // console.log(exercises)
         const token = await AsyncStorage.getItem('accessToken');
         console.log(token)
         if (token) {
@@ -61,6 +67,29 @@ export default function App() {
 
     };
     checkAuthentication();
+  }, []);
+
+
+  useEffect(() => {
+    const checkTime = async () => {
+      const now = moment();
+      const centralTime = now.tz("America/Chicago"); // Central Time
+      //console.log("Current Central Time:", centralTime.format('HH:mm:ss'));
+      // Check if the current time in Central Time zone is 12:00 PM
+      if (centralTime.format('HH:mm:ss') === '12:00:00') {
+        //setIsNoonCentral(true);
+        const exresponse = await axios.get('http://10.0.2.2:8000/api/user/getExercises'); 
+        const exercises = exresponse.data.exercises;
+        await AsyncStorage.setItem("listofex",JSON.stringify(exercises));
+      }
+      // } else {
+      //   setIsNoonCentral(false);
+      // }
+    };
+
+    const interval = setInterval(checkTime, 1000); // Check every second
+
+    return () => clearInterval(interval); // Clean up on component unmount
   }, []);
 
 

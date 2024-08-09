@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import Card from '../components/TrainingCard'; // Adjust the import path as necessary
 import { Icon } from 'react-native-elements';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ExercisePage = () => {
     const navigation = useNavigation();
@@ -19,10 +20,15 @@ const ExercisePage = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                console.log("getting all exercises");
-                const response = await axios.get('http://10.0.2.2:8000/api/user/getExercises'); 
-                const exercises = response.data.exercises;
-                setData(exercises);
+                if (data===null)
+                {
+                    console.log("getting all exercises");
+                    // const response = await axios.get('http://10.0.2.2:8000/api/user/getExercises'); 
+                    // const exercises = response.data.exercises;
+                    const response=await AsyncStorage.getItem("listofex")
+                    const exercises=JSON.parse(response)
+                    setData(exercises);
+                }
             } catch (error) {
                 console.log("err2");
                 setError(error);

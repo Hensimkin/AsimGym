@@ -12,6 +12,8 @@ import ProfilePage from '../pages/ProfilePage'
 import FirstSettingsPage from '../pages/FirstSettingsPage'
 import TrainingProgramPage from '../pages/TrainingProgramPage'
 import UserRehearsalsPage from '../pages/UserRehearsalsPage'
+import UserTrainingPage from '../pages/UserTrainingPage'
+
 
 const Stack = createStackNavigator();
 
@@ -28,6 +30,7 @@ const AppNavigation = () => {
         <Stack.Screen name="FirstSettingsPage" component={FirstSettingsPage} options={{ headerShown: false }} />
         <Stack.Screen name="TrainingProgram" component={TrainingProgramPage} />
         <Stack.Screen name="UserRehearsalsPage" component={UserRehearsalsPage} />
+        <Stack.Screen name="UserTrainingPage" component={UserTrainingPage} />
       </Stack.Navigator>
     );
   };

@@ -1,7 +1,5 @@
-// ProfileScreen.js
-
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, ScrollView, Switch, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, ScrollView, Switch, Image, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import muscleImages from '../data/muscleImages'; // Import the images
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -10,9 +8,6 @@ import { useNavigation } from '@react-navigation/native';
 
 const ProfileScreen = () => {
     const navigation = useNavigation();
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
     const [height, setHeight] = useState('160');
     const [weight, setWeight] = useState('70');
     const [gender, setGender] = useState('male');
@@ -21,42 +16,53 @@ const ProfileScreen = () => {
     const [goal, setGoal] = useState('Lose Weight');
     const [selectedMuscles, setSelectedMuscles] = useState([]);
     const [isFormValid, setIsFormValid] = useState(false);
+    const [loading, setLoading] = useState(true); // Loading state
 
     const muscleGroups = [
         'fullbody', 'back', 'biceps', 'cardio', 'chest', 'forearms', 'lower_legs', 'neck', 'shoulders', 'triceps', 'upper_legs', 'waist'
     ];
 
-    // useEffect(() => {
-    //     // Load user data from AsyncStorage
-    //     const loadUserData = async () => {
-    //         const storedEmail = await AsyncStorage.getItem('useremail');
-    //         setEmail(storedEmail);
-    //         // Fetch user details from API
-    //         try {
-    //             const response = await axios.get(`http://10.0.2.2:8000/api/user/${storedEmail}`);
-    //             const userData = response.data;
-    //             setName(userData.name);
-    //             setHeight(userData.height);
-    //             setWeight(userData.weight);
-    //             setGender(userData.gender);
-    //             setAge(userData.age);
-    //             setFitnessLevel(userData.fitnessLevel);
-    //             setGoal(userData.goal);
-    //             setSelectedMuscles(userData.selectedMuscles);
-    //         } catch (error) {
-    //             console.error('Error loading user data:', error);
-    //         }
-    //     };
-    //     loadUserData();
-    // }, []);
+    useEffect(() => {
+        // Load user data from AsyncStorage
+        const loadUserData = async () => {
+            const email = await AsyncStorage.getItem('useremail');
+            console.log("User email:", email);
+    
+            // Fetch user details from API
+            try {
+                const response = await axios.get('http://10.0.2.2:8000/api/user/getProfile', {
+                    params: {
+                        email: email
+                    }
+                });
+                const userData = response.data.userdetails;
+                console.log("User data:", userData);
+    
+                if (userData) {
+                    setHeight(userData.height || '160');
+                    setWeight(userData.weight || '70');
+                    setGender(userData.gender || 'male');
+                    setAge(userData.age || '');
+                    setFitnessLevel(userData.fitnessLevel || 'Beginner');
+                    setGoal(userData.goal || 'Lose Weight');
+                    setSelectedMuscles(userData.selectedMuscles || []);
+                }
+            } catch (error) {
+                console.error('Error loading user data:', error);
+            } finally {
+                setLoading(false); // Set loading to false when data fetching is done
+            }
+        };
+        loadUserData();
+    }, []);
 
     useEffect(() => {
-        if (age && selectedMuscles.length > 0 && height && weight && name && password) {
+        if (age && selectedMuscles.length > 0 && height && weight) {
             setIsFormValid(true);
         } else {
             setIsFormValid(false);
         }
-    }, [age, selectedMuscles, height, weight, name, password]);
+    }, [age, selectedMuscles, height, weight]);
 
     const toggleMuscleSelection = (muscle) => {
         let updatedMuscles;
@@ -91,7 +97,8 @@ const ProfileScreen = () => {
     };
 
     const handleSave = async () => {
-        const details = { email, name, password, height, weight, gender, age, fitnessLevel, goal, selectedMuscles };
+        const email = await AsyncStorage.getItem('useremail');
+        const details = { email, height, weight, gender, age, fitnessLevel, goal, selectedMuscles };
         try {
             const response = await axios.post('http://10.0.2.2:8000/api/user/updateProfile', details);
             if (response.data.msg === 'success') {
@@ -102,24 +109,17 @@ const ProfileScreen = () => {
         }
     };
 
+    if (loading) {
+        return (
+            <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color="#007AFF" />
+            </View>
+        );
+    }
+
     return (
         <View style={styles.container}>
             <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
-                <Text style={styles.label}>Name</Text>
-                <TextInput
-                    style={styles.textInput}
-                    value={name}
-                    onChangeText={setName}
-                />
-
-                <Text style={styles.label}>Password</Text>
-                <TextInput
-                    style={styles.textInput}
-                    secureTextEntry
-                    value={password}
-                    onChangeText={setPassword}
-                />
-
                 <Text style={styles.label}>Height (cm)</Text>
                 <TextInput
                     style={styles.textInput}
@@ -197,10 +197,10 @@ const ProfileScreen = () => {
             <TouchableOpacity
                 style={[
                     styles.doneButtonContainer,
-                    // { backgroundColor: isFormValid ? '#007AFF' : '#A9A9A9' }
-                    { backgroundColor: '#007AFF' }
+                    { backgroundColor: isFormValid ? '#007AFF' : '#A9A9A9' }
                 ]}
                 onPress={handleSave}
+                disabled={!isFormValid}
             >
                 <Text style={styles.doneButtonText}>Save</Text>
             </TouchableOpacity>
@@ -212,6 +212,11 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     scrollView: {
         flex: 1,

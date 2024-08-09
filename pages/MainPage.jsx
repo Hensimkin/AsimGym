@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity, Switch, KeyboardAvoidingView, ScrollView, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, StyleSheet, Text, TouchableOpacity, Switch, KeyboardAvoidingView, ScrollView, TouchableWithoutFeedback, Keyboard, Dimensions } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import NameCard from '../components/ExcersiceCard'; // Adjust the import path as necessary
 import axios from 'axios';
+
+const { width } = Dimensions.get('window');
 
 const MainPage = () => {
     const navigation = useNavigation();
@@ -13,36 +15,40 @@ const MainPage = () => {
     const [buttonColor, setButtonColor] = useState('#008000'); // Green
     const [exerciseNames, setExerciseNames] = useState([]); // State to store exercise names
 
+    const fetchUsername = async () => {
+        try {
+            const storedUsername = await AsyncStorage.getItem('username');
+            if (storedUsername) {
+                setUsername(storedUsername);
+            }
+        } catch (error) {
+            console.error('Error fetching username from AsyncStorage:', error);
+        }
+    };
+
+    const fetchExercises = async () => {
+        try {
+            const storedUserEmail = await AsyncStorage.getItem('useremail');
+            const response = await axios.post('http://10.0.2.2:8000/api/user/getExcersicesNames', {
+                email: storedUserEmail
+            });
+            setExerciseNames(response.data.exercisenames); // Store exercise names in state
+        } catch (error) {
+            console.error('Error fetching data from backend:', error);
+        }
+    };
+
     useEffect(() => {
-        const fetchUsername = async () => {
-            try {
-                const storedUsername = await AsyncStorage.getItem('username');
-                if (storedUsername) {
-                    setUsername(storedUsername);
-                }
-            } catch (error) {
-                console.error('Error fetching username from AsyncStorage:', error);
-            }
-        };
-
-        const fetchExercises = async () => {
-            try {
-                const storedUserEmail = await AsyncStorage.getItem('useremail');
-                console.log(storedUserEmail);
-                console.log(storedUserEmail);
-                const response = await axios.post('http://10.0.2.2:8000/api/user/getExcersicesNames', {
-                    email: storedUserEmail
-                });
-                console.log(response.data.exercisenames);
-                setExerciseNames(response.data.exercisenames); // Store exercise names in state
-            } catch (error) {
-                console.error('Error fetching data from backend:', error);
-            }
-        };
-
         fetchUsername();
         fetchExercises();
     }, []);
+
+    useFocusEffect(
+        useCallback(() => {
+            // Fetch exercises whenever the screen is focused
+            fetchExercises();
+        }, [])
+    );
 
     const clearAsyncStorage = async () => {
         try {
@@ -58,14 +64,9 @@ const MainPage = () => {
         navigation.navigate('TrainingProgram');
     };
 
-    const handleToggleButtonPress = () => {
-        if (buttonLabel === 'Start') {
-            setButtonLabel('Stop');
-            setButtonColor('#FF0000'); // Red
-        } else {
-            setButtonLabel('Start');
-            setButtonColor('#008000'); // Green
-        }
+
+    const handleCardPress = (name) => {
+        navigation.navigate('UserTrainingPage', { exerciseName: name });
     };
 
     return (
@@ -93,17 +94,23 @@ const MainPage = () => {
                         </TouchableOpacity>
 
                         {exerciseNames.map((name, index) => (
-                            <NameCard key={index} name={name} />
+                            <TouchableOpacity
+                                key={index}
+                                style={styles.cardContainer}
+                                onPress={() => handleCardPress(name)}
+                            >
+                                <NameCard name={name} />
+                            </TouchableOpacity>
                         ))}
 
                     </View>
                 </TouchableWithoutFeedback>
-                <TouchableOpacity
+                {/* <TouchableOpacity
                     style={[styles.toggleButton, { backgroundColor: buttonColor }]}
                     onPress={handleToggleButtonPress}
                 >
                     <Text style={styles.toggleButtonText}>{buttonLabel}</Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
             </ScrollView>
         </KeyboardAvoidingView>
     );
@@ -147,12 +154,15 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 24,
     },
+    cardContainer: {
+        width: width * 0.9, // 90% of the screen width
+        marginVertical: 10,
+    },
     toggleButton: {
         position: 'absolute',
         bottom: 0,
         left: 0,
         right: 0,
-        
         height: 50,
         justifyContent: 'center',
         alignItems: 'center',
