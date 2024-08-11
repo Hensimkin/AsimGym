@@ -13,6 +13,7 @@ import FirstSettingsPage from '../pages/FirstSettingsPage'
 import TrainingProgramPage from '../pages/TrainingProgramPage'
 import UserRehearsalsPage from '../pages/UserRehearsalsPage'
 import UserTrainingPage from '../pages/UserTrainingPage'
+import StatisticsPage from '../pages/StatisticsPage'
 
 
 const Stack = createStackNavigator();
@@ -31,6 +32,7 @@ const AppNavigation = () => {
         <Stack.Screen name="TrainingProgram" component={TrainingProgramPage} />
         <Stack.Screen name="UserRehearsalsPage" component={UserRehearsalsPage} />
         <Stack.Screen name="UserTrainingPage" component={UserTrainingPage} />
+        <Stack.Screen name="StatisticsPage" component={StatisticsPage} />
       </Stack.Navigator>
     );
   };

@@ -125,14 +125,13 @@ const ExerciseDetail = () => {
             };
 
             console.log("Exercise Data:", exerciseData);
-
-            // If you need to send this data to an API:
-            // try {
-            //     await axios.post('http://10.0.2.2:8000/api/user/logExercise', exerciseData);
-            //     console.log("Exercise data logged successfully.");
-            // } catch (error) {
-            //     console.error("Error logging exercise data:", error);
-            // }
+            const exerciseDataString = JSON.stringify(exerciseData);
+            try {
+                await axios.post('http://10.0.2.2:8000/api/user/postExerciseLog', exerciseDataString);
+                console.log("Exercise data logged successfully.");
+            } catch (error) {
+                console.error("Error logging exercise data:", error);
+            }
 
             setStartTime(null); // Reset the start time
         }
