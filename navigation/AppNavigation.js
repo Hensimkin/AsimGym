@@ -14,6 +14,7 @@ import TrainingProgramPage from '../pages/TrainingProgramPage'
 import UserRehearsalsPage from '../pages/UserRehearsalsPage'
 import UserTrainingPage from '../pages/UserTrainingPage'
 import StatisticsPage from '../pages/StatisticsPage'
+import GraphPage from '../pages/GraphPage'
 
 
 const Stack = createStackNavigator();
@@ -33,6 +34,7 @@ const AppNavigation = () => {
         <Stack.Screen name="UserRehearsalsPage" component={UserRehearsalsPage} />
         <Stack.Screen name="UserTrainingPage" component={UserTrainingPage} />
         <Stack.Screen name="StatisticsPage" component={StatisticsPage} />
+        <Stack.Screen name="GraphPage" component={GraphPage} />
       </Stack.Navigator>
     );
   };
