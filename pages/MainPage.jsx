@@ -54,16 +54,19 @@ const MainPage = () => {
         try {
             await AsyncStorage.clear();
             console.log('AsyncStorage cleared successfully.');
+            navigation.navigate('HomePage'); // Redirect to login page after logout
         } catch (error) {
             console.error('Error clearing AsyncStorage:', error);
         }
     };
 
-    const handleButtonPress = () => {
-        // clearAsyncStorage();
-        navigation.navigate('TrainingProgram');
+    const handleLogoutPress = () => {
+        clearAsyncStorage();
     };
 
+    const handleButtonPress = () => {
+        navigation.navigate('TrainingProgram');
+    };
 
     const handleCardPress = (name) => {
         navigation.navigate('UserTrainingPage', { exerciseName: name });
@@ -75,6 +78,13 @@ const MainPage = () => {
                 <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                     <View style={styles.inner}>
                         {username ? <Text style={styles.username}>Welcome, {username}!</Text> : null}
+
+                        <TouchableOpacity
+                            style={styles.logoutButton}
+                            onPress={handleLogoutPress}
+                        >
+                            <Text style={styles.logoutButtonText}>Logout</Text>
+                        </TouchableOpacity>
 
                         <View style={styles.switchContainer}>
                             <Text style={styles.label}>AI</Text>
@@ -105,12 +115,6 @@ const MainPage = () => {
 
                     </View>
                 </TouchableWithoutFeedback>
-                {/* <TouchableOpacity
-                    style={[styles.toggleButton, { backgroundColor: buttonColor }]}
-                    onPress={handleToggleButtonPress}
-                >
-                    <Text style={styles.toggleButtonText}>{buttonLabel}</Text>
-                </TouchableOpacity> */}
             </ScrollView>
         </KeyboardAvoidingView>
     );
@@ -130,7 +134,18 @@ const styles = StyleSheet.create({
     },
     username: {
         fontSize: 20,
+        marginBottom: 10,
+    },
+    logoutButton: {
+        backgroundColor: '#FF0000', // Red color
+        borderRadius: 5,
+        paddingVertical: 10,
+        paddingHorizontal: 20,
         marginBottom: 20,
+    },
+    logoutButtonText: {
+        color: '#fff',
+        fontSize: 18,
     },
     switchContainer: {
         flexDirection: 'row',

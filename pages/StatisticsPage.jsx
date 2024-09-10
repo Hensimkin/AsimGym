@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Alert, Button, Modal, Text, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
+import { View, Alert, Button, Modal, Text, ScrollView, TouchableOpacity, Dimensions, Image } from 'react-native';
 import axios from 'axios';
 import { Calendar } from 'react-native-calendars';
 import { LineChart } from 'react-native-chart-kit';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
+import moment from 'moment'; // Import moment.js for date handling
 
 const ExerciseLogScreen = () => {
   const [logs, setLogs] = useState([]);
@@ -13,8 +14,10 @@ const ExerciseLogScreen = () => {
   const [calendarVisible, setCalendarVisible] = useState(false);
   const [graphModalVisible, setGraphModalVisible] = useState(false);
   const [exerciseModalVisible, setExerciseModalVisible] = useState(false);
+  const [weeklyStatsModalVisible, setWeeklyStatsModalVisible] = useState(false);
   const [uniqueExerciseNames, setUniqueExerciseNames] = useState([]);
   const [selectedExerciseLogs, setSelectedExerciseLogs] = useState([]);
+  const [weeklyLogs, setWeeklyLogs] = useState([]); // New state to store weekly logs
 
   const fetchExerciseLog = async () => {
     try {
@@ -22,8 +25,10 @@ const ExerciseLogScreen = () => {
       const response = await axios.post('http://10.0.2.2:8000/api/user/getExerciseLog', {
         email: useremail,
       });
+      console.log(response.data)
       setLogs(response.data.logs);
       extractUniqueExerciseNames(response.data.logs); // Extract unique exercise names
+      filterLogsForCurrentWeek(response.data.logs); // Filter logs for the current week
     } catch (error) {
       console.error(error);
       Alert.alert('Error', 'Failed to fetch exercise logs');
@@ -42,6 +47,18 @@ const ExerciseLogScreen = () => {
       exerciseNamesSet.add(log.exerciseName);
     });
     setUniqueExerciseNames(Array.from(exerciseNamesSet));
+  };
+
+  const filterLogsForCurrentWeek = (logs) => {
+    const startOfWeek = moment().startOf('isoWeek').toDate();
+    const endOfWeek = moment().endOf('isoWeek').toDate();
+
+    const filteredLogs = logs.filter(log => {
+      const logDate = moment(log.date, 'M/D/YYYY').toDate();
+      return logDate >= startOfWeek && logDate <= endOfWeek;
+    });
+
+    setWeeklyLogs(filteredLogs);
   };
 
   const handleDayPress = (day) => {
@@ -82,6 +99,14 @@ const ExerciseLogScreen = () => {
     setExerciseModalVisible(false);
   };
 
+  const handleWeeklyStatsButtonPress = () => {
+    setWeeklyStatsModalVisible(true);
+  };
+
+  const closeWeeklyStatsModal = () => {
+    setWeeklyStatsModalVisible(false);
+  };
+
   const renderGraph = (label, data, yAxisSuffix) => {
     return (
       <ScrollView horizontal={true}>
@@ -110,55 +135,67 @@ const ExerciseLogScreen = () => {
   };
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <View style={{ flex: 1, justifyContent: 'top', alignItems: 'center' }}>
+      
+      <View style={{ width: '80%',marginVertical: 10 }}>
       <Button title="Open Calendar" onPress={() => setCalendarVisible(true)} />
+    </View>
+
+    <View style={{width: '80%', marginVertical: 10 }}>
       <Button title="Graph Button" onPress={handleGraphButtonPress} />
+    </View>
+
+    <View style={{ width: '80%',marginVertical: 10 }}>
+      <Button title="Weekly Stats" onPress={handleWeeklyStatsButtonPress} />
+    </View>
+
+    
 
       <Modal
-  animationType="slide"
-  transparent={true}
-  visible={calendarVisible}
-  onRequestClose={() => setCalendarVisible(false)}
->
-  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)' }}>
-    <View style={{
-      backgroundColor: 'white', 
-      padding: 20, 
-      borderRadius: 10, 
-      width: 350, 
-      height: 400, // Increased height to ensure the calendar fits well
-      justifyContent: 'center', // Center the content vertically
-    }}>
-      <Calendar
-        onDayPress={handleDayPress}
-        markedDates={
-          logs.reduce((acc, log) => {
-            acc[log.date] = { marked: true };
-            return acc;
-          }, {})
-        }
-        style={{
-          borderRadius: 10, // Rounded corners for the calendar itself
-          overflow: 'hidden', // Ensure rounded corners apply correctly
-        }}
-        theme={{
-          todayTextColor: '#00adf5',
-          arrowColor: 'blue',
-          selectedDayBackgroundColor: '#00adf5',
-          selectedDayTextColor: '#ffffff',
-          textDayFontWeight: '500',
-          textMonthFontWeight: 'bold',
-          textDayHeaderFontWeight: 'bold',
-          textDayFontSize: 16,
-          textMonthFontSize: 18,
-          textDayHeaderFontSize: 14,
-          backgroundColor: 'transparent', // Transparent background for the calendar
-        }}
-      />
-      <Button title="Close Calendar" onPress={() => setCalendarVisible(false)} />
-    </View>
-  </View>
-</Modal>
+        animationType="slide"
+        transparent={true}
+        visible={calendarVisible}
+        onRequestClose={() => setCalendarVisible(false)}
+      >
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <View style={{
+            backgroundColor: 'white', 
+            padding: 20, 
+            borderRadius: 10, 
+            width: 350, 
+            height: 400, // Increased height to ensure the calendar fits well
+            justifyContent: 'center', // Center the content vertically
+          }}>
+            <Calendar
+              onDayPress={handleDayPress}
+              markedDates={
+                logs.reduce((acc, log) => {
+                  acc[log.date] = { marked: true };
+                  return acc;
+                }, {})
+              }
+              style={{
+                borderRadius: 10, // Rounded corners for the calendar itself
+                overflow: 'hidden', // Ensure rounded corners apply correctly
+              }}
+              theme={{
+                todayTextColor: '#00adf5',
+                arrowColor: 'blue',
+                selectedDayBackgroundColor: '#00adf5',
+                selectedDayTextColor: '#ffffff',
+                textDayFontWeight: '500',
+                textMonthFontWeight: 'bold',
+                textDayHeaderFontWeight: 'bold',
+                textDayFontSize: 16,
+                textMonthFontSize: 18,
+                textDayHeaderFontSize: 14,
+                backgroundColor: 'transparent', // Transparent background for the calendar
+              }}
+            />
+            <Button title="Close Calendar" onPress={() => setCalendarVisible(false)} />
+          </View>
+        </View>
+      </Modal>
 
       <Modal
         animationType="slide"
@@ -281,7 +318,52 @@ const ExerciseLogScreen = () => {
           </View>
         </View>
       </Modal>
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={weeklyStatsModalVisible}
+        onRequestClose={closeWeeklyStatsModal}
+      >
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <View style={{ backgroundColor: 'white', padding: 20, borderRadius: 10, width: 350, height: 400 }}>
+            <Text style={{ fontSize: 18, marginBottom: 10 }}>Weekly Stats</Text>
+            <ScrollView>
+              {weeklyLogs.length > 0 ? (
+                weeklyLogs.map((log, index) => (
+                  <View key={index} style={{ marginBottom: 20 }}>
+                    <Text style={{ fontWeight: 'bold' }}>Exercise: {log.exerciseName}</Text>
+                    <Text>Duration: {log.duration}</Text>
+                    <Text>Start Time: {log.startTime}</Text>
+                    <Text>End Time: {log.endTime}</Text>
+                    {Object.keys(log.exercises).map((exerciseName, index) => (
+                      <View key={index}>
+                        <Text>Exercise: {exerciseName}</Text>
+                        <Text>Reps: {log.exercises[exerciseName].reps}</Text>
+                        <Text>Weight: {log.exercises[exerciseName].weight}</Text>
+                        <Text>Sets: {log.exercises[exerciseName].sets}</Text>
+                      </View>
+                    ))}
+                  </View>
+                ))
+              ) : (
+                <Text>No logs available for this week</Text>
+              )}
+            </ScrollView>
+            <View style={{ marginVertical: 20 }}>
+              <Button title="Close" onPress={closeWeeklyStatsModal} />
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      <Image
+        source={require('../pictures/fitnessstats.png')}
+        style={{ width: '90%', height: '50%', marginTop: 200 }}
+        
+      />
     </View>
+    
   );
 };
 

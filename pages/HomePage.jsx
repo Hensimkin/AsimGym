@@ -46,12 +46,15 @@ export default function App() {
               if(response2.data.msg=="true") // started
               {
                 navigation.navigate('MainPage');
+                setLoading(false);
               }
               else{
                 navigation.navigate('FirstSettingsPage');
+                setLoading(false)
               }
             } else {
               navigation.navigate('VerificationPage');
+              setLoading(false)
             }
           }
           catch (error) {

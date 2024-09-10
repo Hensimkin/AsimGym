@@ -99,9 +99,14 @@ const LoginScreen = () => {
               onChangeText={text => setEmail(text)}
             />
 
-            <TouchableOpacity style={styles.loginLink} onPress={goToReg}>
-              <Text style={styles.loginText}>Haven't signed yet?</Text>
-            </TouchableOpacity>
+            <View style={styles.loginOptionsContainer}>
+              <TouchableOpacity style={styles.loginLink} onPress={goToReg}>
+                <Text style={styles.loginText}>Haven't signed yet?</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.forgotPasswordLink} onPress={() => navigation.navigate('ForgotPassPage')}>
+                <Text style={styles.forgotPasswordText}>Forgot password?</Text>
+              </TouchableOpacity>
+            </View>
 
             <View style={[styles.input, { top: 550 }]}>
               <TextInput
@@ -220,9 +225,21 @@ const styles = StyleSheet.create({
     position: 'absolute',
     transform: [{ scaleX: -1 }],
   },
-  loginLink: {
+  loginOptionsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '80%',
     position: 'absolute',
     top: 600,
+  },
+  loginLink: {
+    alignSelf: 'flex-start',
+  },
+  forgotPasswordLink: {
+    alignSelf: 'flex-end',
+  },
+  forgotPasswordText: {
+    color: '#007bff',
   },
   passwordVisibilityButton: {
     marginLeft: 10,

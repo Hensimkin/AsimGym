@@ -15,6 +15,7 @@ import UserRehearsalsPage from '../pages/UserRehearsalsPage'
 import UserTrainingPage from '../pages/UserTrainingPage'
 import StatisticsPage from '../pages/StatisticsPage'
 import GraphPage from '../pages/GraphPage'
+import ForgotPassPage from '../pages/ForgotPassPage'
 
 
 const Stack = createStackNavigator();
@@ -35,6 +36,7 @@ const AppNavigation = () => {
         <Stack.Screen name="UserTrainingPage" component={UserTrainingPage} />
         <Stack.Screen name="StatisticsPage" component={StatisticsPage} />
         <Stack.Screen name="GraphPage" component={GraphPage} />
+        <Stack.Screen name="ForgotPassPage" component={ForgotPassPage} options={{ headerShown: false }}/>
       </Stack.Navigator>
     );
   };
