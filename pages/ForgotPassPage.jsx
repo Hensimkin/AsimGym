@@ -24,14 +24,14 @@ const ForgotPasswordPage = () => {
     try {
       const response = await axios.post('http://10.0.2.2:8000/api/user/forgotPassword', {
         email: email,
-        newPassword: newPassword,
+        password: newPassword,
       });
-      if (response.data.success) {
+      if (response.data.message === 'Password updated successfully') {
         Alert.alert('Password Reset Successful', 'Your password has been reset. You can now log in with your new password.');
-        navigation.navigate('LoginScreen');
-      } else {
+        navigation.navigate('LoginPage');
+    } else {
         Alert.alert('Reset Failed', 'Unable to reset password. Please try again.');
-      }
+    }
     } catch (error) {
       console.error('Error resetting password:', error);
       Alert.alert('Error', 'An error occurred while resetting the password. Please try again later.');

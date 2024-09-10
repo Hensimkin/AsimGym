@@ -135,17 +135,17 @@ const ExerciseLogScreen = () => {
   };
 
   return (
-    <View style={{ flex: 1, justifyContent: 'top', alignItems: 'center' }}>
+    <View style={{ flex: 1, justifyContent: 'top', alignItems: 'center',marginVertical: 10 }}>
       
-      <View style={{ width: '80%',marginVertical: 10 }}>
+      <View style={{ width: '70%',marginVertical: 10 ,borderRadius: 25}}>
       <Button title="Open Calendar" onPress={() => setCalendarVisible(true)} />
     </View>
 
-    <View style={{width: '80%', marginVertical: 10 }}>
+    <View style={{width: '70%', marginVertical: 10 ,borderRadius: 25}}>
       <Button title="Graph Button" onPress={handleGraphButtonPress} />
     </View>
 
-    <View style={{ width: '80%',marginVertical: 10 }}>
+    <View style={{ width: '70%',marginVertical: 10 ,borderRadius: 25}}>
       <Button title="Weekly Stats" onPress={handleWeeklyStatsButtonPress} />
     </View>
 
@@ -165,6 +165,7 @@ const ExerciseLogScreen = () => {
             width: 350, 
             height: 400, // Increased height to ensure the calendar fits well
             justifyContent: 'center', // Center the content vertically
+            
           }}>
             <Calendar
               onDayPress={handleDayPress}
