@@ -16,6 +16,10 @@ const LoginScreen = () => {
 
   const handleLogin = async () => {
     try {
+      const exresponse = await axios.get('http://10.0.2.2:8000/api/user/getExercises'); 
+        const exercises = exresponse.data.exercises;
+        await AsyncStorage.setItem("listofex",JSON.stringify(exercises));
+
       const response = await axios.post('http://10.0.2.2:8000/api/user/login', {
         email: email,
         password: password,

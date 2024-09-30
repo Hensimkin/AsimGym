@@ -19,7 +19,7 @@ const FitnessDetails = () => {
   const [isFormValid, setIsFormValid] = useState(false);
 
   const muscleGroups = [
-    'fullbody', 'back', 'biceps', 'cardio', 'chest', 'forearms', 'lower_legs', 'neck', 'shoulders', 'triceps', 'upper_legs', 'waist'
+    'fullbody', 'back', 'upper arms', 'cardio', 'chest', 'lower arms', 'lower legs', 'neck', 'shoulders', 'upper legs', 'waist'
   ];
 
   useEffect(() => {

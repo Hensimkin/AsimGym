@@ -19,6 +19,8 @@ const ExerciseDetail = () => {
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedExercise, setSelectedExercise] = useState(null);
     const [userEmail, setUserEmail] = useState('');
+    const [ratings, setRatings] = useState({}); // State to hold the ratings
+    const [keepOrChange, setKeepOrChange] = useState({}); // State to track keep/change choice for rating 3
 
     useEffect(() => {
         const sendExerciseData = async () => {
@@ -31,13 +33,16 @@ const ExerciseDetail = () => {
                     excersicename: exerciseName
                 });
                 const exercises = response.data.exerciseProgram;
+
                 setExercises(exercises);
 
                 const listofex = await AsyncStorage.getItem("listofex");
+
                 const exerciseList = JSON.parse(listofex);
 
                 const detailedExercises = exercises.map(ex => {
-                    const detailedExercise = exerciseList.find(e => e.name === ex.exercise_name);
+                    const filteredExercises = exerciseList.filter(e => e.name === ex.exercise_name);
+                    const detailedExercise = filteredExercises.length > 0 ? filteredExercises[0] : undefined;
                     return { ...detailedExercise, reps: ex.reps, weight: ex.weight, sets: ex.sets };
                 });
 
@@ -69,18 +74,24 @@ const ExerciseDetail = () => {
     const handleSave = async () => {
         try {
             const excersicename = exerciseName;
-
             const details = JSON.stringify(inputValues);
             console.log(details);
+    
             const payload = {
                 useremail: userEmail,
                 excersicename: excersicename,
                 payload: details,
             };
-
-            const response = await axios.post('http://10.0.2.2:8000/api/user/updateExercises', payload);
+    
+            // Check if the exerciseName is "AI Exercise" and set the URL accordingly
+            const url = excersicename === "AI Exercise"
+                ? 'http://10.0.2.2:8000/api/user/updateAIExercises'
+                : 'http://10.0.2.2:8000/api/user/updateExercises';
+    
+            const response = await axios.post(url, payload);
             console.log(response);
-            //navigation.navigate("MainPage");
+            // Uncomment the navigation line if you want to navigate after saving
+            // navigation.navigate("MainPage");
         } catch (error) {
             console.error('Error saving exercise details:', error);
         }
@@ -133,9 +144,70 @@ const ExerciseDetail = () => {
                 console.error("Error logging exercise data:", error);
             }
 
+            // Check if exercise is "AI Exercise" and show the modal
+            if (exerciseName === "AI Exercise") {
+                setModalVisible(true);
+            }
+
             setStartTime(null); // Reset the start time
         }
         setStarted(!started);
+    };
+
+    const handleRatingChange = (exerciseName, rating) => {
+        setRatings(prevRatings => ({
+            ...prevRatings,
+            [exerciseName]: rating,
+        }));
+
+        // If the user selects rating 3, show Keep or Change options
+        if (rating === 3) {
+            setKeepOrChange(prev => ({
+                ...prev,
+                [exerciseName]: null, // reset the choice
+            }));
+        } else {
+            setKeepOrChange(prev => ({
+                ...prev,
+                [exerciseName]: undefined, // remove the prompt
+            }));
+        }
+    };
+
+    const handleKeepOrChange = (exerciseName, choice) => {
+        setKeepOrChange(prev => ({
+            ...prev,
+            [exerciseName]: choice,
+        }));
+    };
+
+    // Check if all exercises are rated
+    const allRated = () => {
+        return exerciseDetails.every(exercise => ratings[exercise.name] && (ratings[exercise.name] !== 3 || keepOrChange[exercise.name]));
+    };
+
+    const handleSendRatings = async () => {
+        if (!allRated()) {
+            alert("Please rate all exercises and choose 'Keep' or 'Change' for exercises rated 3.");
+            return;
+        }
+
+        try {
+            const payload = {
+                useremail: userEmail,
+                exerciseName: exerciseName,
+                ratings: ratings,
+                choices: keepOrChange, // include the keep/change choices
+            };
+            console.log(payload)
+            await axios.post('http://10.0.2.2:8000/api/user/exerciseRatings', payload);
+            console.log("Ratings sent successfully.");
+            setModalVisible(false);
+            setRatings({}); // Clear ratings after submission
+            setKeepOrChange({}); // Clear keep/change choices
+        } catch (error) {
+            console.error("Error sending ratings:", error);
+        }
     };
 
     const handleCardPress = (exercise) => {
@@ -209,6 +281,84 @@ const ExerciseDetail = () => {
             <TouchableOpacity style={[styles.startStopButton, { backgroundColor: started ? '#dc3545' : '#28a745' }]} onPress={handleStartStop}>
                 <Text style={styles.startStopButtonText}>{started ? 'Stop' : 'Start'}</Text>
             </TouchableOpacity>
+
+            {/* Modal for AI Exercise Ratings */}
+            {exerciseName === "AI Exercise" && (
+                <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={modalVisible}
+                    onRequestClose={closeModal}
+                >
+                    <View style={styles.modalContainer}>
+                        <View style={styles.modalContent}>
+                            <Text style={styles.exerciseTitle}>Rate the Exercises</Text>
+                            <Text style={styles.instructions}>
+                                1 = Very Liked, 2 = Liked, 3 = Medium (Choose Keep or Change), 4 = Not Liked
+                            </Text>
+                            <ScrollView>
+                                {exerciseDetails.map((exercise, index) => (
+                                    <View key={index} style={styles.ratingContainer}>
+                                        <Text style={styles.modalText}>{exercise.name}</Text>
+                                        <View style={styles.ratingOptions}>
+                                            {[1, 2, 3, 4].map((rating) => (
+                                                <TouchableOpacity
+                                                    key={rating}
+                                                    style={[
+                                                        styles.ratingButton,
+                                                        ratings[exercise.name] === rating && styles.selectedRating
+                                                    ]}
+                                                    onPress={() => handleRatingChange(exercise.name, rating)}
+                                                >
+                                                    <Text style={styles.ratingButtonText}>{rating}</Text>
+                                                </TouchableOpacity>
+                                            ))}
+                                        </View>
+                                        
+                                        {/* Show Keep/Change options if rating is 3 */}
+                                        {ratings[exercise.name] === 3 && (
+                                            <View style={styles.keepChangeContainer}>
+                                                <Text>Would you like to keep or change this exercise?</Text>
+                                                <View style={styles.keepChangeOptions}>
+                                                    <TouchableOpacity
+                                                        style={[
+                                                            styles.keepChangeButton,
+                                                            keepOrChange[exercise.name] === 'Keep' && styles.selectedKeepChange
+                                                        ]}
+                                                        onPress={() => handleKeepOrChange(exercise.name, 'Keep')}
+                                                    >
+                                                        <Text style={styles.keepChangeText}>Keep</Text>
+                                                    </TouchableOpacity>
+                                                    <TouchableOpacity
+                                                        style={[
+                                                            styles.keepChangeButton,
+                                                            keepOrChange[exercise.name] === 'Change' && styles.selectedKeepChange
+                                                        ]}
+                                                        onPress={() => handleKeepOrChange(exercise.name, 'Change')}
+                                                    >
+                                                        <Text style={styles.keepChangeText}>Change</Text>
+                                                    </TouchableOpacity>
+                                                </View>
+                                            </View>
+                                        )}
+                                    </View>
+                                ))}
+                            </ScrollView>
+                            <TouchableOpacity
+                                onPress={handleSendRatings}
+                                style={[styles.sendButton, { opacity: allRated() ? 1 : 0.5 }]}
+                                disabled={!allRated()}
+                            >
+                                <Text style={styles.sendButtonText}>Send</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={closeModal} style={styles.closeButton}>
+                                <Text style={styles.closeButtonText}>Close</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </Modal>
+            )}
+
             {selectedExercise && (
                 <Modal
                     animationType="slide"
@@ -339,12 +489,71 @@ const styles = StyleSheet.create({
         height: 200,
         marginBottom: 10,
     },
+    ratingContainer: {
+        width: '100%',
+        marginVertical: 10,
+    },
+    ratingOptions: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+    },
+    ratingButton: {
+        backgroundColor: '#ccc',
+        padding: 10,
+        borderRadius: 5,
+        width: 40,
+        alignItems: 'center',
+    },
+    selectedRating: {
+        backgroundColor: '#007bff',
+    },
+    ratingButtonText: {
+        color: '#fff',
+        fontWeight: 'bold',
+    },
+    sendButton: {
+        backgroundColor: '#28a745',
+        padding: 15,
+        borderRadius: 5,
+        marginTop: 20,
+        width: '60%',
+        alignItems: 'center',
+    },
+    sendButtonText: {
+        color: '#fff',
+        fontSize: 18,
+    },
     closeButton: {
         marginTop: 20,
     },
     closeButtonText: {
         color: 'red',
         fontSize: 16,
+    },
+    instructions: {
+        fontSize: 16,
+        marginBottom: 10,
+        textAlign: 'center',
+        color: '#555',
+    },
+    keepChangeContainer: {
+        marginTop: 10,
+    },
+    keepChangeOptions: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+    },
+    keepChangeButton: {
+        backgroundColor: '#ccc',
+        padding: 10,
+        borderRadius: 5,
+        marginHorizontal: 10,
+    },
+    selectedKeepChange: {
+        backgroundColor: '#007bff',
+    },
+    keepChangeText: {
+        color: '#fff',
     },
 });
 

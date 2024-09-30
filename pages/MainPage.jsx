@@ -38,9 +38,24 @@ const MainPage = () => {
         }
     };
 
+    const fetchAIExercise = async () => {
+        try {
+            // Simulating the backend request
+            const response = await axios.post('http://10.0.2.2:8000/api/ai/fetchExercise', {
+                // Add any necessary request body here
+            });
+            
+            // For now, just print the response to the console
+            console.log('AI Exercise data:', response.data);
+        } catch (error) {
+            console.error('Error fetching AI exercise data from backend:', error);
+        }
+    };
+
     useEffect(() => {
         fetchUsername();
         fetchExercises();
+        //fetchAIExercise();
     }, []);
 
     useFocusEffect(
@@ -103,16 +118,26 @@ const MainPage = () => {
                             <Text style={styles.plusButtonText}>+</Text>
                         </TouchableOpacity>
 
-                        {exerciseNames.map((name, index) => (
+                        {isRegular ? (
+                            // Regular mode: Show regular exercise cards
+                            exerciseNames.map((name, index) => (
+                                <TouchableOpacity
+                                    key={index}
+                                    style={styles.cardContainer}
+                                    onPress={() => handleCardPress(name)}
+                                >
+                                    <NameCard name={name} />
+                                </TouchableOpacity>
+                            ))
+                        ) : (
+                            // AI mode: Show AI Exercise card
                             <TouchableOpacity
-                                key={index}
                                 style={styles.cardContainer}
-                                onPress={() => handleCardPress(name)}
+                                onPress={() => handleCardPress('AI Exercise')}
                             >
-                                <NameCard name={name} />
+                                <NameCard name="AI Exercise" />
                             </TouchableOpacity>
-                        ))}
-
+                        )}
                     </View>
                 </TouchableWithoutFeedback>
             </ScrollView>
