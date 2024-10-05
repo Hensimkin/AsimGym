@@ -205,6 +205,7 @@ const ExerciseDetail = () => {
             setModalVisible(false);
             setRatings({}); // Clear ratings after submission
             setKeepOrChange({}); // Clear keep/change choices
+            navigation.navigate('MainPage');
         } catch (error) {
             console.error("Error sending ratings:", error);
         }
@@ -461,6 +462,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        paddingTop: 120,
+        paddingBottom: 120,
+
     },
     modalContent: {
         backgroundColor: '#fff',
