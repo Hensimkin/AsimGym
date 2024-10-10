@@ -16,11 +16,11 @@ const LoginScreen = () => {
 
   const handleLogin = async () => {
     try {
-      const exresponse = await axios.get('http://10.0.2.2:8000/api/user/getExercises'); 
+      const exresponse = await axios.get('https://asimgymbackend.onrender.com/api/user/getExercises'); 
         const exercises = exresponse.data.exercises;
         await AsyncStorage.setItem("listofex",JSON.stringify(exercises));
 
-      const response = await axios.post('http://10.0.2.2:8000/api/user/login', {
+      const response = await axios.post('https://asimgymbackend.onrender.com/api/user/login', {
         email: email,
         password: password,
       });
@@ -35,15 +35,15 @@ const LoginScreen = () => {
       console.log('User login response:', response.data);
       console.log(email);
 
-      const accessToken = await axios.get(`http://10.0.2.2:8000/api/user/getToken?email=${encodeURIComponent(email)}`);
+      const accessToken = await axios.get(`https://asimgymbackend.onrender.com/api/user/getToken?email=${encodeURIComponent(email)}`);
       console.log(accessToken.data.accesstoken);
       await AsyncStorage.setItem('accessToken', accessToken.data.accesstoken);
 
-      const checkVerifiedUser = await axios.post('http://10.0.2.2:8000/api/user/checkverify', {
+      const checkVerifiedUser = await axios.post('https://asimgymbackend.onrender.com/api/user/checkverify', {
         email: email,
       });
       
-      const response3 = await axios.post('http://10.0.2.2:8000/api/user/checkstart', {email: email});
+      const response3 = await axios.post('https://asimgymbackend.onrender.com/api/user/checkstart', {email: email});
 
 
       if (checkVerifiedUser.data.msg === "true") {

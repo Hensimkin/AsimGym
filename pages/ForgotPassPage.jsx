@@ -22,7 +22,12 @@ const ForgotPasswordPage = () => {
     }
 
     try {
-      const response = await axios.post('http://10.0.2.2:8000/api/user/forgotPassword', {
+      // const response = await axios.post('http://10.0.2.2:8000/api/user/forgotPassword', {
+      //   email: email,
+      //   password: newPassword,
+      // });
+
+      const response = await axios.post('https://asimgymbackend.onrender.com/api/user/forgotPassword', {
         email: email,
         password: newPassword,
       });

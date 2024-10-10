@@ -51,7 +51,7 @@ const DrawerNavigator = () => {
         <Drawer.Screen name="Excersice Page" component={ExcersicePage} />
         <Drawer.Screen name="Equipment Page" component={EquipmentPage} />
         {/* //<Drawer.Screen name="testPage" component={testPage} /> */}
-        <Drawer.Screen name="StatisticsPage" component={StatisticsPage} />
+        <Drawer.Screen name="Statistics Page" component={StatisticsPage} />
       </Drawer.Navigator>
 
   );

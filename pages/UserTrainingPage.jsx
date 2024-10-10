@@ -28,7 +28,7 @@ const ExerciseDetail = () => {
                 const email = await AsyncStorage.getItem("useremail");
                 setUserEmail(email);
                 
-                const response = await axios.post('http://10.0.2.2:8000/api/user/getExerciseProgram', {
+                const response = await axios.post('https://asimgymbackend.onrender.com/api/user/getExerciseProgram', {
                     email: email,
                     excersicename: exerciseName
                 });
@@ -85,8 +85,8 @@ const ExerciseDetail = () => {
     
             // Check if the exerciseName is "AI Exercise" and set the URL accordingly
             const url = excersicename === "AI Exercise"
-                ? 'http://10.0.2.2:8000/api/user/updateAIExercises'
-                : 'http://10.0.2.2:8000/api/user/updateExercises';
+                ? 'https://asimgymbackend.onrender.com/api/user/updateAIExercises'
+                : 'https://asimgymbackend.onrender.com/api/user/updateExercises';
     
             const response = await axios.post(url, payload);
             console.log(response);
@@ -138,7 +138,7 @@ const ExerciseDetail = () => {
             console.log("Exercise Data:", exerciseData);
             const exerciseDataString = JSON.stringify(exerciseData);
             try {
-                await axios.post('http://10.0.2.2:8000/api/user/postExerciseLog', exerciseDataString);
+                await axios.post('https://asimgymbackend.onrender.com/api/user/postExerciseLog', exerciseDataString);
                 console.log("Exercise data logged successfully.");
             } catch (error) {
                 console.error("Error logging exercise data:", error);
@@ -200,7 +200,7 @@ const ExerciseDetail = () => {
                 choices: keepOrChange, // include the keep/change choices
             };
             console.log(payload)
-            await axios.post('http://10.0.2.2:8000/api/user/exerciseRatings', payload);
+            await axios.post('https://asimgymbackend.onrender.com/api/user/exerciseRatings', payload);
             console.log("Ratings sent successfully.");
             setModalVisible(false);
             setRatings({}); // Clear ratings after submission

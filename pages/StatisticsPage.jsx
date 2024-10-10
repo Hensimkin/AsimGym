@@ -22,7 +22,7 @@ const ExerciseLogScreen = () => {
   const fetchExerciseLog = async () => {
     try {
       const useremail = await AsyncStorage.getItem("useremail");
-      const response = await axios.post('http://10.0.2.2:8000/api/user/getExerciseLog', {
+      const response = await axios.post('https://asimgymbackend.onrender.com/api/user/getExerciseLog', {
         email: useremail,
       });
       console.log(response.data)

@@ -59,7 +59,7 @@ const ExerciseDetailPage = () => {
         payload: details,
       };
 
-      const response = await axios.post('http://10.0.2.2:8000/api/user/updateExercises', payload);
+      const response = await axios.post('https://asimgymbackend.onrender.com/api/user/updateExercises', payload);
       console.log(response);
       navigation.navigate("MainPage");
     } catch (error) {

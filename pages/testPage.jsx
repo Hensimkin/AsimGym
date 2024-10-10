@@ -12,7 +12,7 @@ const App = () => {
     setError(null);
 
     try {
-      const response = await axios.post('http://10.0.2.2:8000/api/user/getExerciseProgram',{
+      const response = await axios.post('https://asimgymbackend.onrender.com/api/user/getExerciseProgram',{
         email: "haniger22@gmail.com",
         excersicename:"ex1"
     });

@@ -21,7 +21,7 @@ const VerificationPage = () => {
         console.log('email',email)
         try{
           console.log("hi")
-          const response = await axios.post('http://10.0.2.2:8000/api/user/verify', {
+          const response = await axios.post('https://asimgymbackend.onrender.com/api/user/verify', {
             email: email});
             console.log("msgggg",response.data.msg)
             if (response.data.msg === "true") {
@@ -45,7 +45,7 @@ const VerificationPage = () => {
   const handleResendCode = async() => { //resend of vercode
     try{
       const email = await AsyncStorage.getItem('userEmail');
-      const resendedCode = await axios.post('http://10.0.2.2:8000/api/user/resendMail',{
+      const resendedCode = await axios.post('https://asimgymbackend.onrender.com/api/user/resendMail',{
         email: email,})
       const semitoken = resendedCode.data.semitoken;
       console.log(semitoken)

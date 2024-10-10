@@ -30,7 +30,7 @@ const ProfileScreen = () => {
     
             // Fetch user details from API
             try {
-                const response = await axios.get('http://10.0.2.2:8000/api/user/getProfile', {
+                const response = await axios.get('https://asimgymbackend.onrender.com/api/user/getProfile', {
                     params: {
                         email: email
                     }
@@ -100,7 +100,7 @@ const ProfileScreen = () => {
         const email = await AsyncStorage.getItem('useremail');
         const details = { email, height, weight, gender, age, fitnessLevel, goal, selectedMuscles };
         try {
-            const response = await axios.post('http://10.0.2.2:8000/api/user/updateProfile', details);
+            const response = await axios.post('https://asimgymbackend.onrender.com/api/user/updateProfile', details);
             if (response.data.msg === 'success') {
                 navigation.navigate('MainPage');
             }

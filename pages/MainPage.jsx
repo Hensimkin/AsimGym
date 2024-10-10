@@ -29,7 +29,7 @@ const MainPage = () => {
     const fetchExercises = async () => {
         try {
             const storedUserEmail = await AsyncStorage.getItem('useremail');
-            const response = await axios.post('http://10.0.2.2:8000/api/user/getExcersicesNames', {
+            const response = await axios.post('https://asimgymbackend.onrender.com/api/user/getExcersicesNames', {
                 email: storedUserEmail
             });
             setExerciseNames(response.data.exercisenames); // Store exercise names in state
@@ -41,7 +41,7 @@ const MainPage = () => {
     const fetchAIExercise = async () => {
         try {
             // Simulating the backend request
-            const response = await axios.post('http://10.0.2.2:8000/api/ai/fetchExercise', {
+            const response = await axios.post('https://asimgymbackend.onrender.com/api/ai/fetchExercise', {
                 // Add any necessary request body here
             });
             

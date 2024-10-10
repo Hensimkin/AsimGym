@@ -25,7 +25,7 @@ export default function App() {
   useEffect(() => {
     const checkAuthentication = async () => {
       try {
-        const exresponse = await axios.get('http://10.0.2.2:8000/api/user/getExercises'); 
+        const exresponse = await axios.get('https://asimgymbackend.onrender.com/api/user/getExercises'); 
         const exercises = exresponse.data.exercises;
         await AsyncStorage.setItem("listofex",JSON.stringify(exercises));
         // // const g=await AsyncStorage.getItem("listofex");
@@ -36,10 +36,10 @@ export default function App() {
           const email = await AsyncStorage.getItem('useremail');
           console.log(email)
           try {
-            const response = await axios.post('http://10.0.2.2:8000/api/user/checkverify', {email: email});
+            const response = await axios.post('https://asimgymbackend.onrender.com/api/user/checkverify', {email: email});
             console.log(response.data.msg)
 
-            const response2 = await axios.post('http://10.0.2.2:8000/api/user/checkstart', {email: email});
+            const response2 = await axios.post('https://asimgymbackend.onrender.com/api/user/checkstart', {email: email});
 
             if (response.data.msg === "true") { //verified
               //navigation.navigate('MainPage');
@@ -81,7 +81,7 @@ export default function App() {
       // Check if the current time in Central Time zone is 12:00 PM
       if (centralTime.format('HH:mm:ss') === '12:00:00') {
         //setIsNoonCentral(true);
-        const exresponse = await axios.get('http://10.0.2.2:8000/api/user/getExercises'); 
+        const exresponse = await axios.get('https://asimgymbackend.onrender.com/api/user/getExercises'); 
         const exercises = exresponse.data.exercises;
         await AsyncStorage.setItem("listofex",JSON.stringify(exercises));
       }

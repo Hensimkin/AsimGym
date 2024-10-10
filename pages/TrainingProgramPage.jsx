@@ -83,7 +83,7 @@ const SelectExercisePage = () => {
                 userEmail: userEmail
             };
             console.log(payload);
-            const response = await axios.post('http://10.0.2.2:8000/api/user/saveExercises', payload);
+            const response = await axios.post('https://asimgymbackend.onrender.com/api/user/saveExercises', payload);
             if(response.data.message === 'ChangeName')
             {
                 setNameError('Name already exists');

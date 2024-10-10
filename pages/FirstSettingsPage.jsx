@@ -64,13 +64,15 @@ const FitnessDetails = () => {
 
     setSelectedMuscles(updatedMuscles);
   };
-
+  
   const handleDone = async () => {
     const email= await AsyncStorage.getItem("useremail");
     const details = { email, height, weight, gender, age, fitnessLevel, goal, selectedMuscles };
     try {
-      const response = await axios.post('http://10.0.2.2:8000/api/user/userConfiguration', details);
-      const response2 = await axios.post('http://10.0.2.2:8000/api/user/verifyConfiguration', {email:email});
+      // const response = await axios.post('http://10.0.2.2:8000/api/user/userConfiguration', details);
+      // const response2 = await axios.post('http://10.0.2.2:8000/api/user/verifyConfiguration', {email:email});
+      const response = await axios.post('https://asimgymbackend.onrender.com/api/user/userConfiguration', details);
+      const response2 = await axios.post('https://asimgymbackend.onrender.com/api/user/verifyConfiguration', {email:email});
       if(response.data.msg=='success' && response2.data.msg=='success')
       {
         navigation.navigate('MainPage')

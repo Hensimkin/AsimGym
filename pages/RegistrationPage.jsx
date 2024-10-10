@@ -46,11 +46,11 @@ const RegistrationPage = () => {
       }
     } else {
       try {
-        const exresponse = await axios.get('http://10.0.2.2:8000/api/user/getExercises');
+        const exresponse = await axios.get('https://asimgymbackend.onrender.com/api/user/getExercises');
         const exercises = exresponse.data.exercises;
         await AsyncStorage.setItem('listofex', JSON.stringify(exercises));
 
-        const response = await axios.post('http://10.0.2.2:8000/api/user/create', {
+        const response = await axios.post('https://asimgymbackend.onrender.com/api/user/create', {
           name: username,
           email: email,
           password: password,
