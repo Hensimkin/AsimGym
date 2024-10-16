@@ -1,11 +1,26 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableHighlight, TouchableOpacity, StyleSheet, Image, KeyboardAvoidingView, ScrollView, TouchableWithoutFeedback, Dimensions, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableHighlight,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+  KeyboardAvoidingView,
+  ScrollView,
+  TouchableWithoutFeedback,
+  Dimensions,
+  Alert,
+} from 'react-native';
 import QuarterCircle from '../shapes/QuarterCircle';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Arrow from 'react-native-arrow';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
+
+const { width, height } = Dimensions.get('window');
 
 const LoginScreen = () => {
   const navigation = useNavigation();
@@ -16,17 +31,17 @@ const LoginScreen = () => {
 
   const handleLogin = async () => {
     try {
-      const exresponse = await axios.get('https://asimgymbackend.onrender.com/api/user/getExercises'); 
-        const exercises = exresponse.data.exercises;
-        await AsyncStorage.setItem("listofex",JSON.stringify(exercises));
+      const exresponse = await axios.get('https://asimgymbackend.onrender.com/api/user/getExercises');
+      const exercises = exresponse.data.exercises;
+      await AsyncStorage.setItem('listofex', JSON.stringify(exercises));
 
       const response = await axios.post('https://asimgymbackend.onrender.com/api/user/login', {
         email: email,
         password: password,
       });
-      console.log(response.data.message)
-      if (response.data.message !== "true") {
-        console.log(response.data.message)
+      console.log(response.data.message);
+      if (response.data.message !== 'true') {
+        console.log(response.data.message);
         Alert.alert('Login Failed', 'Incorrect email or password. Please try again.');
         return;
       }
@@ -35,26 +50,26 @@ const LoginScreen = () => {
       console.log('User login response:', response.data);
       console.log(email);
 
-      const accessToken = await axios.get(`https://asimgymbackend.onrender.com/api/user/getToken?email=${encodeURIComponent(email)}`);
+      const accessToken = await axios.get(
+        `https://asimgymbackend.onrender.com/api/user/getToken?email=${encodeURIComponent(email)}`
+      );
       console.log(accessToken.data.accesstoken);
       await AsyncStorage.setItem('accessToken', accessToken.data.accesstoken);
 
       const checkVerifiedUser = await axios.post('https://asimgymbackend.onrender.com/api/user/checkverify', {
         email: email,
       });
-      
-      const response3 = await axios.post('https://asimgymbackend.onrender.com/api/user/checkstart', {email: email});
 
+      const response3 = await axios.post('https://asimgymbackend.onrender.com/api/user/checkstart', {
+        email: email,
+      });
 
-      if (checkVerifiedUser.data.msg === "true") {
-        //navigation.navigate('MainPage');
-        if(response3.data.msg=="true") // started
-              {
-                navigation.navigate('MainPage');
-              }
-              else{
-                navigation.navigate('FirstSettingsPage');
-              }
+      if (checkVerifiedUser.data.msg === 'true') {
+        if (response3.data.msg == 'true') {
+          navigation.navigate('MainPage');
+        } else {
+          navigation.navigate('FirstSettingsPage');
+        }
       } else {
         navigation.navigate('VerificationPage');
       }
@@ -89,30 +104,30 @@ const LoginScreen = () => {
             <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('HomePage')}>
               <Arrow name="ios-arrow-back" size={24} color="black" />
             </TouchableOpacity>
-            <Image
-              source={require('../pictures/lady_login.png')}
-              style={styles.image}
-            />
+            <Image source={require('../pictures/lady_login.png')} style={styles.image} />
             <Text style={styles.title}>Login</Text>
 
             <TextInput
-              style={[styles.input, { top: 500 }]}
+              style={[styles.input, styles.emailInput]}
               placeholder="Email"
               keyboardType="email-address"
               value={email}
-              onChangeText={text => setEmail(text)}
+              onChangeText={text => setEmail(text.toLowerCase())}
             />
 
             <View style={styles.loginOptionsContainer}>
               <TouchableOpacity style={styles.loginLink} onPress={goToReg}>
-                <Text style={styles.loginText}>Haven't signed yet?</Text>
+                <Text style={styles.loginText}>Haven't signed up yet?</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.forgotPasswordLink} onPress={() => navigation.navigate('ForgotPassPage')}>
+              <TouchableOpacity
+                style={styles.forgotPasswordLink}
+                onPress={() => navigation.navigate('ForgotPassPage')}
+              >
                 <Text style={styles.forgotPasswordText}>Forgot password?</Text>
               </TouchableOpacity>
             </View>
 
-            <View style={[styles.input, { top: 550 }]}>
+            <View style={[styles.input, styles.passwordInput]}>
               <TextInput
                 placeholder="Password"
                 secureTextEntry={hidePassword}
@@ -143,110 +158,98 @@ const LoginScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   scrollContainer: {
     flexGrow: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: Dimensions.get('window').height,
-  },
-  title: {
-    fontWeight: 'bold',
-    fontSize: 50,
-    color: '#ffffff',
-    bottom: 550,
-  },
-  input: {
-    flexDirection: 'row',
-    width: '80%',
-    height: 40,
-    borderColor: 'black',
-    borderWidth: 1,
-    borderRadius: 5,
-    paddingHorizontal: 10,
-    marginBottom: 10,
-    position: 'absolute',
-    color: 'black',
-    fontWeight: 'bold',
-    alignItems: 'center',
-  },
-  inputView: {
-    width: '80%',
-    backgroundColor: '#465881',
-    borderRadius: 25,
-    height: 50,
-    marginBottom: 20,
-    justifyContent: 'center',
-    padding: 20,
-  },
-  inputText: {
-    height: 50,
-    color: 'white',
-  },
-  loginBtn: {
-    width: '100%',
-    backgroundColor: '#fb5b5a',
-    borderRadius: 25,
-    height: 50,
-    bottom: 0,
-  },
-  loginText: {
-    color: '#007bff',
+    minHeight: height,
   },
   insideView: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
     width: '100%',
   },
-  image: {
-    bottom: 110,
-    width: 400,
-    height: 400,
-  },
-  button: {
-    backgroundColor: '#00BFFF',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'absolute',
-    top: 630,
-    width: '40%',
-    transform: [{ scale: 1 }],
-  },
-  buttonPressed: {
-    transform: [{ scale: 1.05 }],
-  },
   backButton: {
-    top: 60,
-    left: 30,
-    flexDirection: 'row',
-    alignItems: 'center',
     position: 'absolute',
+    top: height * 0.06,
+    left: width * 0.05,
     transform: [{ scaleX: -1 }],
+    zIndex: 1,
+  },
+  quarterCircle: {
+    position: 'absolute',
+    top: height * 0.1,
+  },
+  image: {
+    width: width * 0.75,
+    height: height * 0.45,
+    position: 'absolute',
+    top: height * 0.15,
+    alignSelf: 'center',
+  },
+  title: {
+    fontWeight: 'bold',
+    fontSize: height * 0.06,
+    color: '#ffffff',
+    position: 'absolute',
+    top: height * 0.06,
+    alignSelf: 'center',
+  },
+  input: {
+    flexDirection: 'row',
+    width: '80%',
+    height: height * 0.06,
+    borderColor: 'black',
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    alignItems: 'center',
+    marginBottom: height * 0.015,
+  },
+  emailInput: {
+    position: 'absolute',
+    top: height * 0.5,
+    alignSelf: 'center',
+  },
+  passwordInput: {
+    position: 'absolute',
+    top: height * 0.58,
+    alignSelf: 'center',
+  },
+  passwordVisibilityButton: {
+    padding: 5,
   },
   loginOptionsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '80%',
     position: 'absolute',
-    top: 600,
+    top: height * 0.66,
   },
-  loginLink: {
-    alignSelf: 'flex-start',
+  loginLink: {},
+  loginText: {
+    color: '#007bff',
+    fontWeight: 'bold',
   },
-  forgotPasswordLink: {
-    alignSelf: 'flex-end',
-  },
+  forgotPasswordLink: {},
   forgotPasswordText: {
     color: '#007bff',
+    fontWeight: 'bold',
   },
-  passwordVisibilityButton: {
-    marginLeft: 10,
+  button: {
+    backgroundColor: '#00BFFF',
+    paddingVertical: height * 0.015,
+    paddingHorizontal: width * 0.1,
+    borderRadius: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'absolute',
+    top: height * 0.74,
+    alignSelf: 'center',
+    width: '40%',
+    transform: [{ scale: 1 }],
+  },
+  buttonPressed: {
+    transform: [{ scale: 1.05 }],
   },
 });
 

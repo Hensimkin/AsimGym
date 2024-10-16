@@ -16,7 +16,8 @@ const ExerciseDetail = () => {
     const [editing, setEditing] = useState(false);
     const [started, setStarted] = useState(false); 
     const [startTime, setStartTime] = useState(null); 
-    const [modalVisible, setModalVisible] = useState(false);
+    const [ratingModalVisible, setRatingModalVisible] = useState(false); // Separate for ratings
+    const [detailsModalVisible, setDetailsModalVisible] = useState(false); // Separate for exercise details
     const [selectedExercise, setSelectedExercise] = useState(null);
     const [userEmail, setUserEmail] = useState('');
     const [ratings, setRatings] = useState({}); // State to hold the ratings
@@ -66,7 +67,7 @@ const ExerciseDetail = () => {
             ...prevValues,
             [exerciseName]: {
                 ...prevValues[exerciseName],
-                [field]: value,
+                [field]: value === '' || isNaN(value) ? 0 : Number(value),
             },
         }));
     };
@@ -108,6 +109,13 @@ const ExerciseDetail = () => {
         toggleEditing();
     };
 
+    const handleKeepOrChange = (exerciseName, choice) => {
+        setKeepOrChange(prev => ({
+            ...prev,
+            [exerciseName]: choice,
+        }));
+    };
+
     const handleStartStop = async () => {
         if (!started) {
             const start = new Date();
@@ -144,14 +152,26 @@ const ExerciseDetail = () => {
                 console.error("Error logging exercise data:", error);
             }
 
-            // Check if exercise is "AI Exercise" and show the modal
+            // Check if exercise is "AI Exercise" and show the rating modal
             if (exerciseName === "AI Exercise") {
-                setModalVisible(true);
+                setRatingModalVisible(true);
+                setDetailsModalVisible(false); // Close any other modals
             }
 
             setStartTime(null); // Reset the start time
         }
         setStarted(!started);
+    };
+
+    const handleCardPress = (exercise) => {
+        setSelectedExercise(exercise);
+        setDetailsModalVisible(true); // Show the exercise details modal
+        setRatingModalVisible(false); // Close any other modals
+    };
+
+    const closeDetailsModal = () => {
+        setDetailsModalVisible(false);
+        setSelectedExercise(null);
     };
 
     const handleRatingChange = (exerciseName, rating) => {
@@ -174,14 +194,6 @@ const ExerciseDetail = () => {
         }
     };
 
-    const handleKeepOrChange = (exerciseName, choice) => {
-        setKeepOrChange(prev => ({
-            ...prev,
-            [exerciseName]: choice,
-        }));
-    };
-
-    // Check if all exercises are rated
     const allRated = () => {
         return exerciseDetails.every(exercise => ratings[exercise.name] && (ratings[exercise.name] !== 3 || keepOrChange[exercise.name]));
     };
@@ -202,23 +214,13 @@ const ExerciseDetail = () => {
             console.log(payload)
             await axios.post('https://asimgymbackend.onrender.com/api/user/exerciseRatings', payload);
             console.log("Ratings sent successfully.");
-            setModalVisible(false);
+            setRatingModalVisible(false);
             setRatings({}); // Clear ratings after submission
             setKeepOrChange({}); // Clear keep/change choices
             navigation.navigate('MainPage');
         } catch (error) {
             console.error("Error sending ratings:", error);
         }
-    };
-
-    const handleCardPress = (exercise) => {
-        setSelectedExercise(exercise);
-        setModalVisible(true);
-    };
-
-    const closeModal = () => {
-        setModalVisible(false);
-        setSelectedExercise(null);
     };
 
     if (loading) {
@@ -240,7 +242,7 @@ const ExerciseDetail = () => {
                             <View style={styles.exerciseContainer}>
                                 <Card
                                     title={exercise.name}
-                                    description={`Target: ${exercise.target}`}
+                                    description={`${exercise.bodyPart}`}
                                     image={exercise.gifUrl} // Replace with actual image URL if available
                                 />
                                 {editing ? (
@@ -288,8 +290,8 @@ const ExerciseDetail = () => {
                 <Modal
                     animationType="slide"
                     transparent={true}
-                    visible={modalVisible}
-                    onRequestClose={closeModal}
+                    visible={ratingModalVisible} // Use separate state for rating modal
+                    onRequestClose={() => setRatingModalVisible(false)}
                 >
                     <View style={styles.modalContainer}>
                         <View style={styles.modalContent}>
@@ -352,7 +354,7 @@ const ExerciseDetail = () => {
                             >
                                 <Text style={styles.sendButtonText}>Send</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={closeModal} style={styles.closeButton}>
+                            <TouchableOpacity onPress={() => setRatingModalVisible(false)} style={styles.closeButton}>
                                 <Text style={styles.closeButtonText}>Close</Text>
                             </TouchableOpacity>
                         </View>
@@ -360,25 +362,28 @@ const ExerciseDetail = () => {
                 </Modal>
             )}
 
+            {/* Modal for Exercise Details */}
             {selectedExercise && (
                 <Modal
                     animationType="slide"
                     transparent={true}
-                    visible={modalVisible}
-                    onRequestClose={closeModal}
+                    visible={detailsModalVisible} // Use separate state for details modal
+                    onRequestClose={closeDetailsModal}
                 >
                     <View style={styles.modalContainer}>
                         <View style={styles.modalContent}>
-                            <Text style={styles.exerciseTitle}>{selectedExercise.name}</Text>
-                            <View style={styles.textContainer}>
-                                <Text style={styles.modalText}>Body Part: {selectedExercise.bodyPart}</Text>
-                                <Text style={styles.modalText}>Equipment: {selectedExercise.equipment}</Text>
-                                <Text style={styles.modalText}>Target: {selectedExercise.target}</Text>
-                                <Text style={styles.modalText}>Secondary Muscles: {selectedExercise.secondaryMuscles}</Text>
-                            </View>
-                            <Image source={{ uri: selectedExercise.gifUrl }} style={styles.exerciseImage} />
-                            <Text style={styles.modalText}>Instructions: {selectedExercise.instructions}</Text>
-                            <TouchableOpacity onPress={closeModal} style={styles.closeButton}>
+                            <ScrollView contentContainerStyle={styles.scrollViewContent}>
+                                <Text style={styles.exerciseTitle}>{selectedExercise.name}</Text>
+                                <View style={styles.textContainer}>
+                                    <Text style={styles.modalText}>Body Part: {selectedExercise.bodyPart}</Text>
+                                    <Text style={styles.modalText}>Equipment: {selectedExercise.equipment}</Text>
+                                    <Text style={styles.modalText}>Target: {selectedExercise.target}</Text>
+                                    <Text style={styles.modalText}>Secondary Muscles: {selectedExercise.secondaryMuscles}</Text>
+                                </View>
+                                <Image source={{ uri: selectedExercise.gifUrl }} style={styles.exerciseImage} />
+                                <Text style={styles.modalText}>Instructions: {selectedExercise.instructions}</Text>
+                            </ScrollView>
+                            <TouchableOpacity onPress={closeDetailsModal} style={styles.closeButton}>
                                 <Text style={styles.closeButtonText}>Close</Text>
                             </TouchableOpacity>
                         </View>

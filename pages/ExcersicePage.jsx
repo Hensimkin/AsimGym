@@ -1,5 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, ScrollView, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard, Modal, Image } from 'react-native';
+import {
+    View,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    StyleSheet,
+    ActivityIndicator,
+    ScrollView,
+    KeyboardAvoidingView,
+    TouchableWithoutFeedback,
+    Keyboard,
+    Modal,
+    Image,
+    useWindowDimensions,
+} from 'react-native';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import Card from '../components/TrainingCard'; // Adjust the import path as necessary
@@ -17,20 +31,22 @@ const ExercisePage = () => {
     const [selectedExercise, setSelectedExercise] = useState(null);
     const [detailsModalVisible, setDetailsModalVisible] = useState(false);
 
+    // Use useWindowDimensions to get current screen dimensions
+    const { width, height } = useWindowDimensions();
+
     useEffect(() => {
         const fetchData = async () => {
             try {
-                if (data===null)
-                {
-                    console.log("getting all exercises");
-                    // const response = await axios.get('http://10.0.2.2:8000/api/user/getExercises'); 
+                if (data === null) {
+                    console.log('getting all exercises');
+                    // const response = await axios.get('http://10.0.2.2:8000/api/user/getExercises');
                     // const exercises = response.data.exercises;
-                    const response=await AsyncStorage.getItem("listofex")
-                    const exercises=JSON.parse(response)
+                    const response = await AsyncStorage.getItem('listofex');
+                    const exercises = JSON.parse(response);
                     setData(exercises);
                 }
             } catch (error) {
-                console.log("err2");
+                console.log('err2');
                 setError(error);
             } finally {
                 setLoading(false);
@@ -46,9 +62,10 @@ const ExercisePage = () => {
     };
 
     const filteredData = data
-        ? data.filter(exercise => 
-            (!filter || exercise.bodyPart === filter) &&
-            exercise.name.toLowerCase().includes(searchQuery.toLowerCase())
+        ? data.filter(
+              (exercise) =>
+                  (!filter || exercise.bodyPart === filter) &&
+                  exercise.name.toLowerCase().includes(searchQuery.toLowerCase())
           )
         : [];
 
@@ -74,6 +91,97 @@ const ExercisePage = () => {
         );
     }
 
+    // Styles adjusted to be responsive using dimensions
+    const styles = StyleSheet.create({
+        container: {
+            flex: 1,
+            backgroundColor: '#fff',
+            padding: width * 0.05, // 5% of screen width
+        },
+        scrollViewContent: {
+            flexGrow: 1,
+            alignItems: 'center',
+            paddingTop: height * 0.02, // 2% of screen height
+        },
+        searchFilterContainer: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            marginBottom: height * 0.02, // 2% of screen height
+        },
+        searchBar: {
+            flex: 1,
+            height: height * 0.06, // 6% of screen height
+            borderColor: '#ccc',
+            borderWidth: 1,
+            borderRadius: 5,
+            paddingLeft: width * 0.03, // 3% of screen width
+            fontSize: width * 0.04, // Responsive font size
+        },
+        filterButton: {
+            backgroundColor: '#007bff',
+            paddingVertical: height * 0.015, // Adjust padding vertical
+            paddingHorizontal: width * 0.03, // Adjust padding horizontal
+            borderRadius: 5,
+            marginLeft: width * 0.03, // 3% of screen width
+            flexDirection: 'row',
+            alignItems: 'center',
+        },
+        filterButtonText: {
+            color: '#fff',
+            fontSize: width * 0.04, // 4% of screen width
+            marginLeft: width * 0.01,
+        },
+        modalContainer: {
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        },
+        modalContent: {
+            backgroundColor: '#fff',
+            padding: width * 0.05, // 5% of screen width
+            borderRadius: 10,
+            width: '80%',
+            alignItems: 'center',
+            maxHeight: height * 0.8, // Limit modal height to 80% of screen height
+        },
+        modalScrollViewContent: {
+            alignItems: 'center',
+            paddingBottom: height * 0.02,
+        },
+        textContainer: {
+            alignItems: 'flex-start',
+            width: '100%',
+            marginBottom: height * 0.01,
+        },
+        modalOption: {
+            fontSize: width * 0.045, // 4.5% of screen width
+            marginBottom: height * 0.01,
+        },
+        closeButton: {
+            marginTop: height * 0.02,
+        },
+        closeButtonText: {
+            color: 'red',
+            fontSize: width * 0.04,
+        },
+        exerciseTitle: {
+            fontSize: width * 0.06, // 6% of screen width
+            fontWeight: 'bold',
+            marginBottom: height * 0.02,
+            textAlign: 'center',
+        },
+        modalText: {
+            fontSize: width * 0.04,
+            marginBottom: height * 0.01,
+        },
+        exerciseImage: {
+            width: width * 0.5,
+            height: width * 0.5,
+            marginBottom: height * 0.02,
+        },
+    });
+
     return (
         <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -85,7 +193,10 @@ const ExercisePage = () => {
                             value={searchQuery}
                             onChangeText={setSearchQuery}
                         />
-                        <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.filterButton}>
+                        <TouchableOpacity
+                            onPress={() => setModalVisible(true)}
+                            style={styles.filterButton}
+                        >
                             <Icon name="filter-list" type="material" color="#fff" />
                             <Text style={styles.filterButtonText}>Filter</Text>
                         </TouchableOpacity>
@@ -114,22 +225,29 @@ const ExercisePage = () => {
                                     <TouchableOpacity onPress={() => applyFilter('chest')}>
                                         <Text style={styles.modalOption}>Chest</Text>
                                     </TouchableOpacity>
-                                    <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.closeButton}>
+                                    <TouchableOpacity
+                                        onPress={() => setModalVisible(false)}
+                                        style={styles.closeButton}
+                                    >
                                         <Text style={styles.closeButtonText}>Close</Text>
                                     </TouchableOpacity>
                                 </View>
                             </View>
                         </Modal>
 
-                        {filteredData && filteredData.slice(0, 10).map((exercise, index) => (
-                            <TouchableOpacity key={index} onPress={() => handleCardPress(exercise)}>
-                                <Card
-                                    title={exercise.name}
-                                    description={exercise.bodyPart}
-                                    image={exercise.gifUrl}
-                                />
-                            </TouchableOpacity>
-                        ))}
+                        {filteredData &&
+                            filteredData.slice(0, 10).map((exercise, index) => (
+                                <TouchableOpacity
+                                    key={index}
+                                    onPress={() => handleCardPress(exercise)}
+                                >
+                                    <Card
+                                        title={exercise.name}
+                                        description={exercise.bodyPart}
+                                        image={exercise.gifUrl}
+                                    />
+                                </TouchableOpacity>
+                            ))}
                     </ScrollView>
 
                     {selectedExercise && (
@@ -141,16 +259,39 @@ const ExercisePage = () => {
                         >
                             <View style={styles.modalContainer}>
                                 <View style={styles.modalContent}>
-                                    <Text style={styles.exerciseTitle}>{selectedExercise.name}</Text>
-                                    <View style={styles.textContainer}>
-                                        <Text style={styles.modalText}>Body Part: {selectedExercise.bodyPart}</Text>
-                                        <Text style={styles.modalText}>Equipment: {selectedExercise.equipment}</Text>
-                                        <Text style={styles.modalText}>Target: {selectedExercise.target}</Text>
-                                        <Text style={styles.modalText}>Secondary Muscles: {selectedExercise.secondaryMuscles}</Text>
-                                    </View>
-                                    <Image source={{ uri: selectedExercise.gifUrl }} style={styles.exerciseImage} />
-                                    <Text style={styles.modalText}>Instructions: {selectedExercise.instructions}</Text>
-                                    <TouchableOpacity onPress={closeDetailsModal} style={styles.closeButton}>
+                                    <ScrollView
+                                        contentContainerStyle={styles.modalScrollViewContent}
+                                    >
+                                        <Text style={styles.exerciseTitle}>
+                                            {selectedExercise.name}
+                                        </Text>
+                                        <View style={styles.textContainer}>
+                                            <Text style={styles.modalText}>
+                                                Body Part: {selectedExercise.bodyPart}
+                                            </Text>
+                                            <Text style={styles.modalText}>
+                                                Equipment: {selectedExercise.equipment}
+                                            </Text>
+                                            <Text style={styles.modalText}>
+                                                Target: {selectedExercise.target}
+                                            </Text>
+                                            <Text style={styles.modalText}>
+                                                Secondary Muscles:{' '}
+                                                {selectedExercise.secondaryMuscles}
+                                            </Text>
+                                        </View>
+                                        <Image
+                                            source={{ uri: selectedExercise.gifUrl }}
+                                            style={styles.exerciseImage}
+                                        />
+                                        <Text style={styles.modalText}>
+                                            Instructions: {selectedExercise.instructions}
+                                        </Text>
+                                    </ScrollView>
+                                    <TouchableOpacity
+                                        onPress={closeDetailsModal}
+                                        style={styles.closeButton}
+                                    >
                                         <Text style={styles.closeButtonText}>Close</Text>
                                     </TouchableOpacity>
                                 </View>
@@ -161,90 +302,6 @@ const ExercisePage = () => {
             </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
     );
-}
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        padding: 20,
-    },
-    scrollViewContent: {
-        flexGrow: 1,
-        alignItems: 'center',
-        paddingTop: 10, // Ensure items start from the top
-    },
-    searchFilterContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 20,
-    },
-    searchBar: {
-        flex: 1,
-        height: 40,
-        borderColor: '#ccc',
-        borderWidth: 1,
-        borderRadius: 5,
-        paddingLeft: 10,
-    },
-    filterButton: {
-        backgroundColor: '#007bff',
-        padding: 10,
-        borderRadius: 5,
-        marginLeft: 10,
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    filterButtonText: {
-        color: '#fff',
-        fontSize: 16,
-        marginLeft: 5,
-    },
-    modalContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    },
-    modalContent: {
-        backgroundColor: '#fff',
-        padding: 20,
-        borderRadius: 10,
-        width: '80%',
-        alignItems: 'center',
-    },
-    textContainer: {
-        alignItems: 'flex-start',
-        width: '100%',
-        marginBottom: 10,
-    },
-    modalOption: {
-        fontSize: 18,
-        marginBottom: 10,
-    },
-    closeButton: {
-        marginTop: 20,
-    },
-    closeButtonText: {
-        color: 'red',
-        fontSize: 16,
-    },
-    exerciseTitle: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 10,
-        textAlign: 'center',
-    },
-    modalText: {
-        fontSize: 16, // Setting the same font size for all modal text
-        marginBottom: 5,
-    },
-    exerciseImage: {
-        width: 200,
-        height: 200,
-        marginBottom: 10,
-    },
-});
+};
 
 export default ExercisePage;
-

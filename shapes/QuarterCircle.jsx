@@ -2,24 +2,20 @@ import React from 'react';
 import { View, StyleSheet, Dimensions } from 'react-native';
 
 const QuarterCircle = () => {
-  const { width } = Dimensions.get('window');
-  const quarterCircleWidth = width;
+  const { width, height } = Dimensions.get('window');
+  const circleSize = width * 1.2; // Adjust the multiplier as needed
 
   return (
-    <View style={[styles.quarterCircle, { width: quarterCircleWidth }]}></View>
+    <View style={[styles.quarterCircle, { width: circleSize, height: circleSize, borderBottomLeftRadius: circleSize }]}></View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   quarterCircle: {
-    height: 420,
     backgroundColor: '#00BFFF',
-    overflow: 'hidden',
-    borderBottomRightRadius: 0,
-    borderBottomLeftRadius: 400,
-    borderTopRightRadius: 0,
     position: 'absolute',
-    bottom: 490,
+    top: -Dimensions.get('window').height * 0.2, // Adjust the position as needed
+    left: -Dimensions.get('window').width * 0.1,
   },
 });
 

@@ -1,5 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, ScrollView, Switch, Image, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
+import {
+    View,
+    Text,
+    TextInput,
+    ScrollView,
+    Switch,
+    Image,
+    TouchableOpacity,
+    StyleSheet,
+    ActivityIndicator,
+    Dimensions,
+} from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import muscleImages from '../data/muscleImages'; // Import the images
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -18,26 +29,48 @@ const ProfileScreen = () => {
     const [isFormValid, setIsFormValid] = useState(false);
     const [loading, setLoading] = useState(true); // Loading state
 
+    // Get device dimensions
+    const windowWidth = Dimensions.get('window').width;
+    const windowHeight = Dimensions.get('window').height;
+
+    // Calculate image size based on device width
+    const imageMargin = windowWidth * 0.025; // 2.5% of screen width
+    const numColumns = 3;
+    const imageWidth = (windowWidth - (numColumns + 1) * imageMargin) / numColumns;
+
     const muscleGroups = [
-        'fullbody', 'back', 'upper arms', 'cardio', 'chest', 'lower arms', 'lower legs', 'neck', 'shoulders', 'upper legs', 'waist'
+        'fullbody',
+        'back',
+        'upper arms',
+        'cardio',
+        'chest',
+        'lower arms',
+        'lower legs',
+        'neck',
+        'shoulders',
+        'upper legs',
+        'waist',
     ];
 
     useEffect(() => {
         // Load user data from AsyncStorage
         const loadUserData = async () => {
             const email = await AsyncStorage.getItem('useremail');
-            console.log("User email:", email);
-    
+            console.log('User email:', email);
+
             // Fetch user details from API
             try {
-                const response = await axios.get('https://asimgymbackend.onrender.com/api/user/getProfile', {
-                    params: {
-                        email: email
+                const response = await axios.get(
+                    'https://asimgymbackend.onrender.com/api/user/getProfile',
+                    {
+                        params: {
+                            email: email,
+                        },
                     }
-                });
+                );
                 const userData = response.data.userdetails;
-                console.log("User data:", userData);
-    
+                console.log('User data:', userData);
+
                 if (userData) {
                     setHeight(userData.height || '160');
                     setWeight(userData.weight || '70');
@@ -75,17 +108,17 @@ const ProfileScreen = () => {
             }
         } else {
             if (selectedMuscles.includes(muscle)) {
-                updatedMuscles = selectedMuscles.filter(item => item !== muscle);
+                updatedMuscles = selectedMuscles.filter((item) => item !== muscle);
             } else {
                 updatedMuscles = [...selectedMuscles, muscle];
             }
 
             if (updatedMuscles.length < muscleGroups.length - 1) {
-                updatedMuscles = updatedMuscles.filter(item => item !== 'fullbody');
+                updatedMuscles = updatedMuscles.filter((item) => item !== 'fullbody');
             }
 
             if (selectedMuscles.includes('fullbody')) {
-                updatedMuscles = updatedMuscles.filter(item => item !== 'fullbody');
+                updatedMuscles = updatedMuscles.filter((item) => item !== 'fullbody');
             }
 
             if (updatedMuscles.length === muscleGroups.length - 1) {
@@ -98,9 +131,21 @@ const ProfileScreen = () => {
 
     const handleSave = async () => {
         const email = await AsyncStorage.getItem('useremail');
-        const details = { email, height, weight, gender, age, fitnessLevel, goal, selectedMuscles };
+        const details = {
+            email,
+            height,
+            weight,
+            gender,
+            age,
+            fitnessLevel,
+            goal,
+            selectedMuscles,
+        };
         try {
-            const response = await axios.post('https://asimgymbackend.onrender.com/api/user/updateProfile', details);
+            const response = await axios.post(
+                'https://asimgymbackend.onrender.com/api/user/updateProfile',
+                details
+            );
             if (response.data.msg === 'success') {
                 navigation.navigate('MainPage');
             }
@@ -119,7 +164,10 @@ const ProfileScreen = () => {
 
     return (
         <View style={styles.container}>
-            <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
+            <ScrollView
+                style={styles.scrollView}
+                contentContainerStyle={styles.scrollContent}
+            >
                 <Text style={styles.label}>Height (cm)</Text>
                 <TextInput
                     style={styles.textInput}
@@ -141,8 +189,10 @@ const ProfileScreen = () => {
                     <Text>Male</Text>
                     <Switch
                         value={gender === 'female'}
-                        onValueChange={() => setGender(gender === 'male' ? 'female' : 'male')}
-                        trackColor={{ false: "#767577", true: "#767577" }}
+                        onValueChange={() =>
+                            setGender(gender === 'male' ? 'female' : 'male')
+                        }
+                        trackColor={{ false: '#767577', true: '#767577' }}
                         thumbColor={gender === 'male' ? '#007AFF' : '#FF1493'}
                     />
                     <Text>Female</Text>
@@ -181,15 +231,20 @@ const ProfileScreen = () => {
                 <Text style={styles.label}>Muscle Groups</Text>
                 <View style={styles.muscleContainer}>
                     {muscleGroups.map((muscle) => (
-                        <TouchableOpacity key={muscle} onPress={() => toggleMuscleSelection(muscle)}>
+                        <TouchableOpacity
+                            key={muscle}
+                            onPress={() => toggleMuscleSelection(muscle)}
+                        >
                             <Image
                                 source={muscleImages[muscle]}
                                 style={[
                                     styles.muscleImage,
-                                    selectedMuscles.includes(muscle) ? styles.selectedMuscle : null
+                                    selectedMuscles.includes(muscle)
+                                        ? styles.selectedMuscle
+                                        : null,
                                 ]}
                             />
-                            <Text>{muscle}</Text>
+                            <Text style={styles.muscleText}>{muscle}</Text>
                         </TouchableOpacity>
                     ))}
                 </View>
@@ -197,7 +252,9 @@ const ProfileScreen = () => {
             <TouchableOpacity
                 style={[
                     styles.doneButtonContainer,
-                    { backgroundColor: isFormValid ? '#007AFF' : '#A9A9A9' }
+                    {
+                        backgroundColor: isFormValid ? '#007AFF' : '#A9A9A9',
+                    },
                 ]}
                 onPress={handleSave}
                 disabled={!isFormValid}
@@ -222,38 +279,44 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     scrollContent: {
-        padding: 20,
-        paddingBottom: 100, // Add padding to ensure the content does not overlap with the button
+        padding: Dimensions.get('window').width * 0.05, // 5% padding
+        paddingBottom: Dimensions.get('window').height * 0.12, // Adjust paddingBottom
     },
     label: {
-        fontSize: 18,
-        marginVertical: 10,
+        fontSize: Dimensions.get('window').width * 0.045, // Adjust font size
+        marginVertical: Dimensions.get('window').height * 0.015,
     },
     textInput: {
         borderBottomWidth: 1,
         borderBottomColor: '#000',
-        marginVertical: 10,
-        paddingHorizontal: 5,
+        marginVertical: Dimensions.get('window').height * 0.01,
+        paddingHorizontal: Dimensions.get('window').width * 0.02,
+        fontSize: Dimensions.get('window').width * 0.04,
     },
     switchContainer: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
+        marginVertical: Dimensions.get('window').height * 0.015,
     },
     picker: {
-        height: 50,
+        height: Dimensions.get('window').height * 0.06,
         width: '100%',
-        marginVertical: 10,
+        marginVertical: Dimensions.get('window').height * 0.015,
     },
     muscleContainer: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        justifyContent: 'space-between',
+        justifyContent: 'flex-start',
     },
     muscleImage: {
-        width: 100,
-        height: 100,
-        margin: 5,
+        width: Dimensions.get('window').width * 0.28,
+        height: Dimensions.get('window').width * 0.28,
+        margin: Dimensions.get('window').width * 0.01,
+    },
+    muscleText: {
+        textAlign: 'center',
+        fontSize: Dimensions.get('window').width * 0.035,
     },
     selectedMuscle: {
         borderColor: 'blue',
@@ -264,12 +327,12 @@ const styles = StyleSheet.create({
         bottom: 0,
         left: 0,
         right: 0,
-        padding: 15,
+        padding: Dimensions.get('window').width * 0.0375, // 3.75% of width
         alignItems: 'center',
     },
     doneButtonText: {
         color: '#fff',
-        fontSize: 18,
+        fontSize: Dimensions.get('window').width * 0.045,
     },
 });
 
