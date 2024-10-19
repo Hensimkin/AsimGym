@@ -59,7 +59,7 @@ const ExerciseLogScreen = () => {
     const endOfWeek = moment().endOf('isoWeek').toDate();
 
     const filteredLogs = logs.filter(log => {
-      const logDate = moment(log.date, 'M/D/YYYY').toDate();
+      const logDate = moment(log.date, ['M/D/YYYY', 'DD.MM.YYYY']).toDate();
       return logDate >= startOfWeek && logDate <= endOfWeek;
     });
 
@@ -69,7 +69,7 @@ const ExerciseLogScreen = () => {
   const highlightExerciseDays = (logs) => {
     const markedDates = {};
     logs.forEach(log => {
-      const formattedDate = moment(log.date, 'M/D/YYYY').format('YYYY-MM-DD');
+      const formattedDate = moment(log.date, ['M/D/YYYY', 'DD.MM.YYYY']).format('YYYY-MM-DD');
       markedDates[formattedDate] = {
         marked: true,
         dotColor: 'blue', // Add a blue dot to indicate exercise
@@ -81,10 +81,13 @@ const ExerciseLogScreen = () => {
   };
 
   const handleDayPress = (day) => {
-    const [year, month, date] = day.dateString.split('-');
-    const formattedDate = `${parseInt(month)}/${parseInt(date)}/${year}`;
-  
-    const selectedDateLogs = logs.filter(log => log.date === formattedDate);
+    const selectedDate = moment(day.dateString, 'YYYY-MM-DD').format('YYYY-MM-DD');
+
+    const selectedDateLogs = logs.filter(log => {
+      const logDate = moment(log.date, ['M/D/YYYY', 'DD.MM.YYYY']).format('YYYY-MM-DD');
+      return logDate === selectedDate;
+    });
+
     if (selectedDateLogs.length > 0) {
       setSelectedLogs(selectedDateLogs); // Set all logs for the selected date
       setCalendarVisible(false);

@@ -97,11 +97,11 @@ const MainPage = () => {
   };
 
   const handleButtonPress = () => {
-    navigation.navigate('TrainingProgram');
+    navigation.navigate('Training Program');
   };
 
   const handleCardPress = (name) => {
-    navigation.navigate('UserTrainingPage', { exerciseName: name });
+    navigation.navigate('User Training Page', { exerciseName: name });
   };
 
   return (

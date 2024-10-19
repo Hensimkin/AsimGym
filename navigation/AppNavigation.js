@@ -31,9 +31,9 @@ const AppNavigation = () => {
         <Stack.Screen name="VerificationPage" component={VerificationPage} options={{ headerShown: false }} />
         <Stack.Screen name="ProfilePage" component={ProfilePage} options={{ headerShown: false }} />
         <Stack.Screen name="FirstSettingsPage" component={FirstSettingsPage} options={{ headerShown: false }} />
-        <Stack.Screen name="TrainingProgram" component={TrainingProgramPage} />
+        <Stack.Screen name="Training Program" component={TrainingProgramPage} />
         <Stack.Screen name="UserRehearsalsPage" component={UserRehearsalsPage} />
-        <Stack.Screen name="UserTrainingPage" component={UserTrainingPage} />
+        <Stack.Screen name="User Training Page" component={UserTrainingPage} />
         <Stack.Screen name="StatisticsPage" component={StatisticsPage} />
         <Stack.Screen name="GraphPage" component={GraphPage} />
         <Stack.Screen name="ForgotPassPage" component={ForgotPassPage} options={{ headerShown: false }}/>
