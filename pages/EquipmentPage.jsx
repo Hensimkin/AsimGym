@@ -73,7 +73,6 @@ const EquipmentPage = () => {
                                     <TouchableOpacity onPress={() => applyFilter('body weight')}>
                                         <Text style={styles.modalOption}>Body Weight</Text>
                                     </TouchableOpacity>
-                                    {/* Add more filters as needed */}
                                     <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.closeButton}>
                                         <Text style={styles.closeButtonText}>Close</Text>
                                     </TouchableOpacity>
@@ -128,7 +127,7 @@ const styles = StyleSheet.create({
     scrollViewContent: {
         flexGrow: 1,
         alignItems: 'center',
-        paddingTop: 10, // Ensure items start from the top
+        paddingTop: 10, 
     },
     searchFilterContainer: {
         flexDirection: 'row',

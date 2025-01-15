@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Card from '../components/TrainingCard'; // Adjust the import path as necessary
+import Card from '../components/TrainingCard'; 
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 
@@ -40,7 +40,6 @@ const ExerciseDetailPage = () => {
       const userEmail = await AsyncStorage.getItem("useremail");
       const excersicename = await AsyncStorage.getItem("excersicename");
       
-      // Set default values for empty fields
       const updatedExerciseDetails = { ...exerciseDetails };
       Object.keys(updatedExerciseDetails).forEach((exerciseName) => {
         const details = updatedExerciseDetails[exerciseName];

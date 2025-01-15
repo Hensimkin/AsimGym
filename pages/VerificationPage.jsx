@@ -40,7 +40,6 @@ const VerificationPage = () => {
         }
 
       } else {
-        // Set error message if the verification code does not match
         setErrorMessage('The verification code is incorrect.');
       }
     }
@@ -144,7 +143,6 @@ const styles = StyleSheet.create({
     marginBottom: height * 0.01,
     fontWeight: 'bold',
   },
-  // Styling for the resend button
   resendButton: {
     backgroundColor: '#007BFF',
     paddingVertical: 10,

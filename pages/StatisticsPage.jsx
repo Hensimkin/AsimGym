@@ -5,9 +5,9 @@ import { Calendar } from 'react-native-calendars';
 import { LineChart } from 'react-native-chart-kit';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
-import moment from 'moment'; // Import moment.js for date handling
+import moment from 'moment'; 
 
-const { width: screenWidth, height: screenHeight } = Dimensions.get('window'); // Get screen dimensions
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window'); 
 
 const ExerciseLogScreen = () => {
   const [logs, setLogs] = useState([]);
@@ -19,8 +19,8 @@ const ExerciseLogScreen = () => {
   const [weeklyStatsModalVisible, setWeeklyStatsModalVisible] = useState(false);
   const [uniqueExerciseNames, setUniqueExerciseNames] = useState([]);
   const [selectedExerciseLogs, setSelectedExerciseLogs] = useState([]);
-  const [weeklyLogs, setWeeklyLogs] = useState([]); // New state to store weekly logs
-  const [markedDates, setMarkedDates] = useState({}); // State to store highlighted dates
+  const [weeklyLogs, setWeeklyLogs] = useState([]); 
+  const [markedDates, setMarkedDates] = useState({}); 
 
   const fetchExerciseLog = async () => {
     try {
@@ -28,12 +28,11 @@ const ExerciseLogScreen = () => {
       const response = await axios.post('https://asimgymbackend.onrender.com/api/user/getExerciseLog', {
         email: useremail,
       });
-      //console.log(response.data)
       console.log('Fetched Logs:', JSON.stringify(response.data, null, 2));
       setLogs(response.data.logs);
-      extractUniqueExerciseNames(response.data.logs); // Extract unique exercise names
-      filterLogsForCurrentWeek(response.data.logs); // Filter logs for the current week
-      highlightExerciseDays(response.data.logs); // Highlight exercise days in the calendar
+      extractUniqueExerciseNames(response.data.logs); 
+      filterLogsForCurrentWeek(response.data.logs); 
+      highlightExerciseDays(response.data.logs); 
     } catch (error) {
       console.error(error);
       Alert.alert('Error', 'Failed to fetch exercise logs');
@@ -72,9 +71,9 @@ const ExerciseLogScreen = () => {
       const formattedDate = moment(log.date, ['M/D/YYYY', 'DD.MM.YYYY']).format('YYYY-MM-DD');
       markedDates[formattedDate] = {
         marked: true,
-        dotColor: 'blue', // Add a blue dot to indicate exercise
-        selected: true, // Highlight the day
-        selectedColor: 'green', // Change the background color for highlighted days
+        dotColor: 'blue', 
+        selected: true, 
+        selectedColor: 'green', 
       };
     });
     setMarkedDates(markedDates);
@@ -89,7 +88,7 @@ const ExerciseLogScreen = () => {
     });
 
     if (selectedDateLogs.length > 0) {
-      setSelectedLogs(selectedDateLogs); // Set all logs for the selected date
+      setSelectedLogs(selectedDateLogs); 
       setCalendarVisible(false);
       setModalVisible(true);
     } else {
@@ -138,7 +137,7 @@ const ExerciseLogScreen = () => {
             labels: data.map((_, index) => index + 1),
             datasets: [{ data }],
           }}
-          width={Math.max(screenWidth, data.length * 60)} // Adjust width based on data length
+          width={Math.max(screenWidth, data.length * 60)} 
           height={220}
           yAxisSuffix={yAxisSuffix}
           chartConfig={{
@@ -188,7 +187,7 @@ const ExerciseLogScreen = () => {
           }}>
             <Calendar
               onDayPress={handleDayPress}
-              markedDates={markedDates} // Use the markedDates state to highlight exercise days
+              markedDates={markedDates} 
               style={{
                 borderRadius: 10, 
                 overflow: 'hidden', 
@@ -212,7 +211,6 @@ const ExerciseLogScreen = () => {
         </View>
       </Modal>
 
-      {/* Log Modal */}
       <Modal
         animationType="slide"
         transparent={true}
@@ -229,7 +227,6 @@ const ExerciseLogScreen = () => {
                     <Text>Duration: {log.duration}</Text>
                     <Text>Start Time: {log.startTime}</Text>
                     <Text>End Time: {log.endTime}</Text>
-                    {/* Displaying exercises details */}
                     {Object.keys(log.exercises).map((exerciseName, index) => (
                       <View key={index}>
                         <Text>Exercise: {exerciseName}</Text>
@@ -251,7 +248,6 @@ const ExerciseLogScreen = () => {
         </View>
       </Modal>
 
-      {/* Graph Modal */}
       <Modal
         animationType="slide"
         transparent={true}
@@ -275,7 +271,6 @@ const ExerciseLogScreen = () => {
         </View>
       </Modal>
 
-      {/* Exercise Details Modal */}
       <Modal
         animationType="slide"
         transparent={true}
@@ -285,11 +280,10 @@ const ExerciseLogScreen = () => {
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)' }}>
           <View style={{ backgroundColor: 'white', padding: 20, borderRadius: 10, width: screenWidth * 0.9, height: screenHeight * 0.7 }}>
             <ScrollView>
-              {selectedExerciseLogs.length > 0 && (
+            {selectedExerciseLogs.length > 0 && (
                 <>
                   <Text style={{ fontSize: 18, marginBottom: 10 }}>Graphs for {selectedExerciseLogs[0].exerciseName}</Text>
 
-                  {/* Duration Graph */}
                   <Text style={{ fontSize: 16, marginTop: 10 }}>Duration (Time)</Text>
                   {renderGraph(
                     'Duration',
@@ -297,48 +291,51 @@ const ExerciseLogScreen = () => {
                     's'
                   )}
 
-                  {/* Graphs for each exercise (sets, reps, weight) */}
-                  {Object.keys(selectedExerciseLogs[0].exercises).map((exerciseName, index) => (
-                  <View key={index}>
-                    <Text style={{ fontSize: 16, marginTop: 10 }}>{exerciseName}</Text>
+                  {(() => {
+                    const allExerciseNames = Array.from(
+                      new Set(
+                        selectedExerciseLogs.flatMap(log => Object.keys(log.exercises))
+                      )
+                    );
+                    return allExerciseNames.map((exerciseName, index) => (
+                      <View key={index}>
+                        <Text style={{ fontSize: 16, marginTop: 10 }}>{exerciseName}</Text>
 
-                    {/* Sets Graph */}
-                    {selectedExerciseLogs.some(log => log.exercises[exerciseName]?.sets !== undefined) && (
-                      <>
-                        <Text style={{ fontSize: 14 }}>Sets</Text>
-                        {renderGraph(
-                          'Sets',
-                          selectedExerciseLogs.map(log => parseFloat(log.exercises[exerciseName]?.sets || 0)),
-                          ''
+                        {selectedExerciseLogs.some(log => log.exercises[exerciseName]?.sets !== undefined) && (
+                          <>
+                            <Text style={{ fontSize: 14 }}>Sets</Text>
+                            {renderGraph(
+                              'Sets',
+                              selectedExerciseLogs.map(log => parseFloat(log.exercises[exerciseName]?.sets || 0)),
+                              ''
+                            )}
+                          </>
                         )}
-                      </>
-                    )}
 
-                    {/* Reps Graph */}
-                    {selectedExerciseLogs.some(log => log.exercises[exerciseName]?.reps !== undefined) && (
-                      <>
-                        <Text style={{ fontSize: 14 }}>Reps</Text>
-                        {renderGraph(
-                          'Reps',
-                          selectedExerciseLogs.map(log => parseFloat(log.exercises[exerciseName]?.reps || 0)),
-                          ''
+                        {selectedExerciseLogs.some(log => log.exercises[exerciseName]?.reps !== undefined) && (
+                          <>
+                            <Text style={{ fontSize: 14 }}>Reps</Text>
+                            {renderGraph(
+                              'Reps',
+                              selectedExerciseLogs.map(log => parseFloat(log.exercises[exerciseName]?.reps || 0)),
+                              ''
+                            )}
+                          </>
                         )}
-                      </>
-                    )}
 
-                    {/* Weight Graph */}
-                    {selectedExerciseLogs.some(log => log.exercises[exerciseName]?.weight !== undefined) && (
-                      <>
-                        <Text style={{ fontSize: 14 }}>Weight</Text>
-                        {renderGraph(
-                          'Weight',
-                          selectedExerciseLogs.map(log => parseFloat(log.exercises[exerciseName]?.weight || 0)),
-                          'kg'
+                        {selectedExerciseLogs.some(log => log.exercises[exerciseName]?.weight !== undefined) && (
+                          <>
+                            <Text style={{ fontSize: 14 }}>Weight</Text>
+                            {renderGraph(
+                              'Weight',
+                              selectedExerciseLogs.map(log => parseFloat(log.exercises[exerciseName]?.weight || 0)),
+                              'kg'
+                            )}
+                          </>
                         )}
-                      </>
-                    )}
-                  </View>
-                ))}
+                      </View>
+                    ));
+                  })()}
                 </>
               )}
               <View style={{ marginVertical: 20 }}>
@@ -349,7 +346,6 @@ const ExerciseLogScreen = () => {
         </View>
       </Modal>
 
-      {/* Weekly Stats Modal */}
       <Modal
         animationType="slide"
         transparent={true}

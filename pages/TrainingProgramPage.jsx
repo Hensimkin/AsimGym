@@ -17,16 +17,14 @@ const SelectExercisePage = () => {
     const [selectedExercises, setSelectedExercises] = useState([]);
     const [name, setName] = useState('');
     const [isButtonDisabled, setIsButtonDisabled] = useState(true);
-    const [nameError, setNameError] = useState(''); // New state for name error message
+    const [nameError, setNameError] = useState(''); 
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 if(data===null)
                 {
-                    console.log("getting all exercises");
-                    // const response = await axios.get('http://10.0.2.2:8000/api/user/getExercises');
-                    // const exercises = response.data.exercises;
+
                     const response=await AsyncStorage.getItem("listofex")
                     const exercises=JSON.parse(response)
                     setData(exercises);
@@ -40,7 +38,7 @@ const SelectExercisePage = () => {
         };
 
         fetchData();
-    }, []); // Empty dependency array means this effect runs once when the component mounts
+    }, []); 
 
     useEffect(() => {
         setIsButtonDisabled(!(name && selectedExercises.length > 0));
@@ -68,7 +66,7 @@ const SelectExercisePage = () => {
 
     const handleDone = async () => {
         try {
-            AsyncStorage.setItem("newcustomexcersice", JSON.stringify(selectedExercises)); // saves the 
+            AsyncStorage.setItem("newcustomexcersice", JSON.stringify(selectedExercises)); 
             const g = await AsyncStorage.getItem("newcustomexcersice");
             const parsedG = JSON.parse(g);
             console.log(parsedG);
@@ -94,7 +92,6 @@ const SelectExercisePage = () => {
             }
         } catch (error) {
             console.log('Error:', error);
-            // Handle error appropriately
         }
     };
 
@@ -204,7 +201,7 @@ const styles = StyleSheet.create({
     scrollViewContent: {
         flexGrow: 1,
         alignItems: 'center',
-        paddingTop: 10, // Ensure items start from the top
+        paddingTop: 10, 
     },
     searchFilterContainer: {
         flexDirection: 'row',
@@ -275,7 +272,7 @@ const styles = StyleSheet.create({
     },
     cardContainer: {
         flex: 1,
-        marginLeft: -10, // Adjust this value to move the card to the left
+        marginLeft: -10, 
     },
     doneButton: {
         backgroundColor: '#28a745',

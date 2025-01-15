@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, ScrollView, Switch, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import muscleImages from '../data/muscleImages'; // Import the images
+import muscleImages from '../data/muscleImages'; 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import {useNavigation} from '@react-navigation/native';
@@ -46,17 +46,14 @@ const FitnessDetails = () => {
         updatedMuscles = [...selectedMuscles, muscle];
       }
 
-      // Remove 'fullbody' if any other muscle is deselected
       if (updatedMuscles.length < muscleGroups.length - 1) {
         updatedMuscles = updatedMuscles.filter(item => item !== 'fullbody');
       }
 
-      // Remove 'fullbody' if it is present and another muscle is toggled
       if (selectedMuscles.includes('fullbody')) {
         updatedMuscles = updatedMuscles.filter(item => item !== 'fullbody');
       }
 
-      // Select 'fullbody' if all muscles are selected
       if (updatedMuscles.length === muscleGroups.length - 1) {
         updatedMuscles = [...updatedMuscles, 'fullbody'];
       }
@@ -77,11 +74,6 @@ const FitnessDetails = () => {
       {
         navigation.navigate('MainPage')
       }
-      // const allKeys = await AsyncStorage.getAllKeys();
-      // const allItems = await AsyncStorage.multiGet(allKeys);
-      // allItems.forEach(([key, value]) => {
-      //   console.log(`${key}: ${value}`);
-      // });
     } catch (error) {
       console.error('Error saving details:', error);
     }
@@ -189,7 +181,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     padding: 20,
-    paddingBottom: 100, // Add padding to ensure the content does not overlap with the button
+    paddingBottom: 100, 
   },
   label: {
     fontSize: 18,

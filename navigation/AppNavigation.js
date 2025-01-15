@@ -1,11 +1,9 @@
 import 'react-native-gesture-handler';
-import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
 import HomePage from '../pages/HomePage';
 import RegistrationPage from '../pages/RegistrationPage';
 import LoginPage from '../pages/LoginPage';
-// import MainPage from '../pages/MainPage';
 import VerificationPage from '../pages/VerificationPage'
 import NavDrawer from '../navigation/DrawerNavigation'
 import ProfilePage from '../pages/ProfilePage'

@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: height,  // Using Dimensions for screen height
+    minHeight: height,  
   },
   insideView: {
     flex: 1,
@@ -184,37 +184,37 @@ const styles = StyleSheet.create({
   },
   title: {
     fontWeight: 'bold',
-    fontSize: width * 0.08, // Font size based on screen width
-    marginBottom: height * 0.15, // Margin adjusted using height
+    fontSize: width * 0.08, 
+    marginBottom: height * 0.15, 
   },
   input: {
     flexDirection: 'row',
     width: '80%',
-    height: height * 0.06, // Height of input field relative to screen height
+    height: height * 0.06, 
     borderColor: 'black',
     borderWidth: 1,
     borderRadius: 5,
-    paddingHorizontal: width * 0.03, // Padding based on screen width
-    marginBottom: height * 0.015, // Margin based on screen height
+    paddingHorizontal: width * 0.03, 
+    marginBottom: height * 0.015, 
     alignItems: 'center',
   },
   passwordVisibilityButton: {
-    marginLeft: width * 0.02, // Margin left adjusted by screen width
+    marginLeft: width * 0.02, 
   },
   button: {
     backgroundColor: '#00BFFF',
-    paddingVertical: height * 0.02, // Button padding adjusted using height
-    paddingHorizontal: width * 0.1, // Button padding adjusted using width
+    paddingVertical: height * 0.02, 
+    paddingHorizontal: width * 0.1, 
     borderRadius: 5,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: height * 0.04, // Margin top adjusted by screen height
-    width: '60%', // Width relative to screen width
+    marginTop: height * 0.04, 
+    width: '60%', 
   },
   buttonText: {
     color: '#fff',
     fontWeight: 'bold',
-    fontSize: width * 0.045, // Font size adjusted by screen width
+    fontSize: width * 0.045, 
   },
 });
 

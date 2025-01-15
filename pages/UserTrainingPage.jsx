@@ -3,7 +3,7 @@ import { View, StyleSheet, Text, TouchableOpacity, ScrollView, TextInput, Activi
 import { useNavigation, useRoute } from '@react-navigation/native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Card from '../components/TrainingCard'; // Adjust the import path as necessary
+import Card from '../components/TrainingCard'; 
 
 const ExerciseDetail = () => {
     const navigation = useNavigation();
@@ -16,12 +16,12 @@ const ExerciseDetail = () => {
     const [editing, setEditing] = useState(false);
     const [started, setStarted] = useState(false); 
     const [startTime, setStartTime] = useState(null); 
-    const [ratingModalVisible, setRatingModalVisible] = useState(false); // Separate for ratings
-    const [detailsModalVisible, setDetailsModalVisible] = useState(false); // Separate for exercise details
+    const [ratingModalVisible, setRatingModalVisible] = useState(false); 
+    const [detailsModalVisible, setDetailsModalVisible] = useState(false); 
     const [selectedExercise, setSelectedExercise] = useState(null);
     const [userEmail, setUserEmail] = useState('');
-    const [ratings, setRatings] = useState({}); // State to hold the ratings
-    const [keepOrChange, setKeepOrChange] = useState({}); // State to track keep/change choice for rating 3
+    const [ratings, setRatings] = useState({}); 
+    const [keepOrChange, setKeepOrChange] = useState({}); 
 
     useEffect(() => {
         const sendExerciseData = async () => {
@@ -84,15 +84,13 @@ const ExerciseDetail = () => {
                 payload: details,
             };
     
-            // Check if the exerciseName is "AI Exercise" and set the URL accordingly
             const url = excersicename === "AI Exercise"
                 ? 'https://asimgymbackend.onrender.com/api/user/updateAIExercises'
                 : 'https://asimgymbackend.onrender.com/api/user/updateExercises';
     
             const response = await axios.post(url, payload);
             console.log(response);
-            // Uncomment the navigation line if you want to navigate after saving
-            // navigation.navigate("MainPage");
+
         } catch (error) {
             console.error('Error saving exercise details:', error);
         }
@@ -123,11 +121,10 @@ const ExerciseDetail = () => {
             console.log("Start Time:", start);
         } else {
             const end = new Date();
-            const duration = (end - startTime) / 1000; // Calculate duration in seconds
+            const duration = (end - startTime) / 1000; 
             console.log("End Time:", end);
             console.log("Total Duration:", duration, "seconds");
 
-            // Prepare the data to be logged
             const exerciseData = {
                 exerciseName: exerciseName,
                 exercises: exerciseDetails.map(ex => ({
@@ -152,13 +149,12 @@ const ExerciseDetail = () => {
                 console.error("Error logging exercise data:", error);
             }
 
-            // Check if exercise is "AI Exercise" and show the rating modal
             if (exerciseName === "AI Exercise") {
                 setRatingModalVisible(true);
-                setDetailsModalVisible(false); // Close any other modals
+                setDetailsModalVisible(false); 
             }
 
-            setStartTime(null); // Reset the start time
+            setStartTime(null); 
         }
         setStarted(!started);
     };
@@ -166,7 +162,7 @@ const ExerciseDetail = () => {
     const handleCardPress = (exercise) => {
         setSelectedExercise(exercise);
         setDetailsModalVisible(true); // Show the exercise details modal
-        setRatingModalVisible(false); // Close any other modals
+        setRatingModalVisible(false); 
     };
 
     const closeDetailsModal = () => {
@@ -209,14 +205,14 @@ const ExerciseDetail = () => {
                 useremail: userEmail,
                 exerciseName: exerciseName,
                 ratings: ratings,
-                choices: keepOrChange, // include the keep/change choices
+                choices: keepOrChange, 
             };
             console.log(payload)
             await axios.post('https://asimgymbackend.onrender.com/api/user/exerciseRatings', payload);
             console.log("Ratings sent successfully.");
             setRatingModalVisible(false);
-            setRatings({}); // Clear ratings after submission
-            setKeepOrChange({}); // Clear keep/change choices
+            setRatings({}); 
+            setKeepOrChange({}); 
             navigation.navigate('MainPage');
         } catch (error) {
             console.error("Error sending ratings:", error);

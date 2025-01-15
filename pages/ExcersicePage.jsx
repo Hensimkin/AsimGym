@@ -31,16 +31,12 @@ const ExercisePage = () => {
     const [selectedExercise, setSelectedExercise] = useState(null);
     const [detailsModalVisible, setDetailsModalVisible] = useState(false);
 
-    // Use useWindowDimensions to get current screen dimensions
     const { width, height } = useWindowDimensions();
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 if (data === null) {
-                    console.log('getting all exercises');
-                    // const response = await axios.get('http://10.0.2.2:8000/api/user/getExercises');
-                    // const exercises = response.data.exercises;
                     const response = await AsyncStorage.getItem('listofex');
                     const exercises = JSON.parse(response);
                     setData(exercises);
@@ -54,7 +50,7 @@ const ExercisePage = () => {
         };
 
         fetchData();
-    }, []); // Empty dependency array means this effect runs once when the component mounts
+    }, []); 
 
     const applyFilter = (bodyPart) => {
         setFilter(bodyPart);
@@ -91,44 +87,43 @@ const ExercisePage = () => {
         );
     }
 
-    // Styles adjusted to be responsive using dimensions
     const styles = StyleSheet.create({
         container: {
             flex: 1,
             backgroundColor: '#fff',
-            padding: width * 0.05, // 5% of screen width
+            padding: width * 0.05, 
         },
         scrollViewContent: {
             flexGrow: 1,
             alignItems: 'center',
-            paddingTop: height * 0.02, // 2% of screen height
+            paddingTop: height * 0.02, 
         },
         searchFilterContainer: {
             flexDirection: 'row',
             alignItems: 'center',
-            marginBottom: height * 0.02, // 2% of screen height
+            marginBottom: height * 0.02, 
         },
         searchBar: {
             flex: 1,
-            height: height * 0.06, // 6% of screen height
+            height: height * 0.06, 
             borderColor: '#ccc',
             borderWidth: 1,
             borderRadius: 5,
-            paddingLeft: width * 0.03, // 3% of screen width
-            fontSize: width * 0.04, // Responsive font size
+            paddingLeft: width * 0.03, 
+            fontSize: width * 0.04, 
         },
         filterButton: {
             backgroundColor: '#007bff',
-            paddingVertical: height * 0.015, // Adjust padding vertical
-            paddingHorizontal: width * 0.03, // Adjust padding horizontal
+            paddingVertical: height * 0.015, 
+            paddingHorizontal: width * 0.03, 
             borderRadius: 5,
-            marginLeft: width * 0.03, // 3% of screen width
+            marginLeft: width * 0.03, 
             flexDirection: 'row',
             alignItems: 'center',
         },
         filterButtonText: {
             color: '#fff',
-            fontSize: width * 0.04, // 4% of screen width
+            fontSize: width * 0.04, 
             marginLeft: width * 0.01,
         },
         modalContainer: {
@@ -139,11 +134,11 @@ const ExercisePage = () => {
         },
         modalContent: {
             backgroundColor: '#fff',
-            padding: width * 0.05, // 5% of screen width
+            padding: width * 0.05, 
             borderRadius: 10,
             width: '80%',
             alignItems: 'center',
-            maxHeight: height * 0.8, // Limit modal height to 80% of screen height
+            maxHeight: height * 0.8, 
         },
         modalScrollViewContent: {
             alignItems: 'center',
@@ -155,7 +150,7 @@ const ExercisePage = () => {
             marginBottom: height * 0.01,
         },
         modalOption: {
-            fontSize: width * 0.045, // 4.5% of screen width
+            fontSize: width * 0.045, 
             marginBottom: height * 0.01,
         },
         closeButton: {
@@ -166,7 +161,7 @@ const ExercisePage = () => {
             fontSize: width * 0.04,
         },
         exerciseTitle: {
-            fontSize: width * 0.06, // 6% of screen width
+            fontSize: width * 0.06, 
             fontWeight: 'bold',
             marginBottom: height * 0.02,
             textAlign: 'center',
